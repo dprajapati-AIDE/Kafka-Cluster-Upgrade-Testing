@@ -50,13 +50,13 @@ services:
       - kafka_network_211
     restart: always
 
-  kafka1:
+  kafka-1-211:
     image: imdhruv99/kafka:2.1.1
-    container_name: kafka1
+    container_name: kafka-1-211
     environment:
       - KAFKA_BROKER_ID=1
       - KAFKA_LISTENERS=INTERNAL://0.0.0.0:29091,EXTERNAL://0.0.0.0:9091
-      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka1:29091,EXTERNAL://localhost:9091
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka-1-211:29091,EXTERNAL://localhost:9091
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
@@ -73,13 +73,13 @@ services:
       - zookeeper3
     restart: always
 
-  kafka2:
+  kafka-2-211:
     image: imdhruv99/kafka:2.1.1
-    container_name: kafka2
+    container_name: kafka-2-211
     environment:
       - KAFKA_BROKER_ID=2
       - KAFKA_LISTENERS=INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092
-      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka2:29092,EXTERNAL://localhost:9092
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka-2-211:29092,EXTERNAL://localhost:9092
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
@@ -96,13 +96,13 @@ services:
       - zookeeper3
     restart: always
 
-  kafka3:
+  kafka-3-211:
     image: imdhruv99/kafka:2.1.1
-    container_name: kafka3
+    container_name: kafka-3-211
     environment:
       - KAFKA_BROKER_ID=3
       - KAFKA_LISTENERS=INTERNAL://0.0.0.0:29093,EXTERNAL://0.0.0.0:9093
-      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka3:29093,EXTERNAL://localhost:9093
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka-3-211:29093,EXTERNAL://localhost:9093
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
@@ -119,42 +119,19 @@ services:
       - zookeeper3
     restart: always
 
-  kafka4:
-    image: imdhruv99/kafka:2.1.1
-    container_name: kafka4
-    environment:
-      - KAFKA_BROKER_ID=4
-      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:29094,EXTERNAL://0.0.0.0:9094
-      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka4:29094,EXTERNAL://localhost:9094
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
-    ports:
-      - "9094:9094"
-      - "29094:29094"
-    volumes:
-      - kafka_data4_211:/var/lib/kafka
-    networks:
-      - kafka_network_211
-    depends_on:
-      - zookeeper1
-      - zookeeper2
-      - zookeeper3
-    restart: always
-
   kafka-ui:
     image: provectuslabs/kafka-ui
     networks:
       - kafka_network_211
     depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
+      - kafka-1-211
+      - kafka-2-211
+      - kafka-3-211
     ports:
       - "8080:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:29091,kafka2:29092,kafka3:29093,kafka4:29094
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1-211:29091,kafka-2-211:29092,kafka-3-211:29093
 
 networks:
   kafka_network_211:
@@ -167,4 +144,3 @@ volumes:
   kafka_data1_211:
   kafka_data2_211:
   kafka_data3_211:
-  kafka_data4_211:
