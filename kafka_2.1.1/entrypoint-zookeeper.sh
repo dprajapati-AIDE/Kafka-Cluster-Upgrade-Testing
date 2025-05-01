@@ -1,10 +1,12 @@
 #!/bin/bash
 
+set -e
+
 ZOOKEEPER_SERVER_ID=${ZOOKEEPER_SERVER_ID:-1}
 ZOOKEEPER_TICK_TIME=${ZOOKEEPER_TICK_TIME:-2000}
 ZOOKEEPER_INIT_LIMIT=${ZOOKEEPER_INIT_LIMIT:-5}
 ZOOKEEPER_SYNC_LIMIT=${ZOOKEEPER_SYNC_LIMIT:-2}
-ZOOKEEPER_SERVERS=${ZOOKEEPER_SERVERS:-"zookeeper1:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888"}
+ZOOKEEPER_SERVERS=${ZOOKEEPER_SERVERS:-"zookeeper-1-211:2888:3888,zookeeper-2-211:2888:3888,zookeeper-3-211:2888:3888"}
 
 mkdir -p /opt/zookeeper/data
 
@@ -24,9 +26,10 @@ syncLimit=${ZOOKEEPER_SYNC_LIMIT}
 EOF
 
 IFS=',' read -ra SERVER_ARRAY <<< "$ZOOKEEPER_SERVERS"
+ID=1
 for server in "${SERVER_ARRAY[@]}"; do
-    ID=$(echo $server | cut -d':' -f1 | sed 's/zookeeper//')
-    echo "server.$ID=$server" >> /opt/zookeeper/conf/zoo.cfg
+    echo "server.${ID}=${server}" >> /opt/zookeeper/conf/zoo.cfg
+    ((ID++))
 done
 
 echo "${ZOOKEEPER_SERVER_ID}" > /opt/zookeeper/data/myid
