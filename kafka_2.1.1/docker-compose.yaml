@@ -145,7 +145,7 @@ services:
   kafka-ui:
     image: provectuslabs/kafka-ui
     networks:
-      - kafka_network
+      - kafka_network_211
     depends_on:
       - kafka1
       - kafka2
