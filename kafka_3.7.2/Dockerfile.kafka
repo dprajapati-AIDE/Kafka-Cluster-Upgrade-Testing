@@ -1,0 +1,35 @@
+# Set base image to OpenJDK 17
+FROM openjdk:17-slim
+
+# Define Kafka version and Scala version
+ENV KAFKA_VERSION=3.7.2
+ENV SCALA_VERSION=2.13
+ENV KAFKA_NAME=kafka_${SCALA_VERSION}-${KAFKA_VERSION}
+ENV KAFKA_ROOT=/opt
+ENV KAFKA_HOME=${KAFKA_ROOT}/kafka
+
+# Install dependencies
+RUN apt-get update && apt-get install -y curl bash && rm -rf /var/lib/apt/lists/*
+
+# Download Kafka from Apache Archive
+RUN curl -sL "https://archive.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_NAME}.tgz" | tar -xz -C /opt/ && \
+    mv /opt/${KAFKA_NAME} /opt/kafka
+
+# Set environment variables
+ENV PATH="${KAFKA_HOME}/bin:${PATH}"
+
+# Create directories for logs and data
+RUN mkdir -p /var/lib/kafka/data
+
+# Expose Kafka ports
+EXPOSE 19091 19092 19093 19094 19095 19096 19097 19098
+
+# Copy the entrypoint script to container
+COPY entrypoint-kafka.sh /entrypoint-kafka.sh
+RUN chmod +x /entrypoint-kafka.sh
+
+# Use the entrypoint script to dynamically configure and start Kafka
+ENTRYPOINT ["/entrypoint-kafka.sh"]
+
+# Default command to start Kafka
+CMD ["/opt/kafka/bin/kafka-server-start.sh", "/opt/kafka/config/server.properties"]
