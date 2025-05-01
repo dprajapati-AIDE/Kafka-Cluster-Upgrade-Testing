@@ -87,26 +87,26 @@ Once topics are created, it's time to generate concurrent load on both Kafka clu
 
 - Run concurrently for both Kafka clusters (version 2.1.1 and 3.7.2).
 
-Each language-specific implementation will use environment variables or configuration files to determine the cluster DNS/IP addresses and other necessary configurations.
+    Each language-specific implementation will use environment variables or configuration files to determine the cluster DNS/IP addresses and other necessary configurations.
 
-Key Tasks:
+    Key Tasks:
 
-1. Python Producer-Consumer:
+    1. Python Producer-Consumer:
 
-- Use the confluent_kafka or kafka-python libraries.
+    - Use the confluent_kafka or kafka-python libraries.
 
-- Use Python's concurrent.futures or asyncio for concurrent production and consumption.
+    - Use Python's concurrent.futures or asyncio for concurrent production and consumption.
 
-2. Java Producer-Consumer:
+    2. Java Producer-Consumer:
 
-- Use KafkaProducer and KafkaConsumer from the Kafka Java client.
+    - Use KafkaProducer and KafkaConsumer from the Kafka Java client.
 
-- Use Java's concurrency mechanisms (e.g., ExecutorService) for parallel processing.
+    - Use Java's concurrency mechanisms (e.g., ExecutorService) for parallel processing.
 
-3. Go Producer-Consumer:
+    3. Go Producer-Consumer:
 
-- Use the github.com/segmentio/kafka-go library.
+    - Use the github.com/segmentio/kafka-go library.
 
-- Use Go's concurrency model (goroutines) for parallel execution.
+    - Use Go's concurrency model (goroutines) for parallel execution.
 
-Each producer-consumer app will run in parallel for both Kafka clusters, simulating real-time load and testing system performance.
+    Each producer-consumer app will run in parallel for both Kafka clusters, simulating real-time load and testing system performance.
