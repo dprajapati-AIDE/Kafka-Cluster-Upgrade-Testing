@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Kafka configuration variables (default values)
+KAFKA_BROKER_ID=${KAFKA_BROKER_ID:-1}
+KAFKA_LISTENERS=${KAFKA_LISTENERS:-"INTERNAL://0.0.0.0:29091,EXTERNAL://0.0.0.0:9091"}
+KAFKA_ADVERTISED_LISTENERS=${KAFKA_ADVERTISED_LISTENERS:-"INTERNAL://kafka1:29091,EXTERNAL://localhost:9091"}
+KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:-"INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"}
+KAFKA_INTER_BROKER_LISTENER_NAME=${KAFKA_CFG_INTER_BROKER_LISTENER_NAME:-"INTERNAL"}
+KAFKA_ZOOKEEPER_CONNECT=${KAFKA_CFG_ZOOKEEPER_CONNECT:-"zookeeper1:2181,zookeeper2:2181,zookeeper3:2181"}
+KAFKA_LOG_DIRS=${KAFKA_LOG_DIRS:-"/var/lib/kafka/data"}
+
+# Log the configuration
+echo "Starting Kafka with the following configuration:"
+echo "  KAFKA_BROKER_ID=${KAFKA_BROKER_ID}"
+echo "  KAFKA_LISTENERS=${KAFKA_LISTENERS}"
+echo "  KAFKA_ADVERTISED_LISTENERS=${KAFKA_ADVERTISED_LISTENERS}"
+echo "  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}"
+echo "  KAFKA_INTER_BROKER_LISTENER_NAME=${KAFKA_INTER_BROKER_LISTENER_NAME}"
+echo "  KAFKA_ZOOKEEPER_CONNECT=${KAFKA_ZOOKEEPER_CONNECT}"
+echo "  KAFKA_LOG_DIRS=${KAFKA_LOG_DIRS}"
+
+# Create necessary directories
+mkdir -p ${KAFKA_LOG_DIRS}
+
+# Dynamically create the server.properties file
+cat <<EOF > /opt/kafka/config/server.properties
+broker.id=${KAFKA_BROKER_ID}
+listeners=${KAFKA_LISTENERS}
+advertised.listeners=${KAFKA_ADVERTISED_LISTENERS}
+listener.security.protocol.map=${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}
+inter.broker.listener.name=${KAFKA_INTER_BROKER_LISTENER_NAME}
+zookeeper.connect=${KAFKA_ZOOKEEPER_CONNECT}
+log.dirs=${KAFKA_LOG_DIRS}
+num.partitions=3
+offsets.topic.replication.factor=2
+auto.create.topics.enable=true
+group.initial.rebalance.delay.ms=0
+EOF
+
+# Start Kafka server
+echo "Starting Kafka..."
+exec "$@"

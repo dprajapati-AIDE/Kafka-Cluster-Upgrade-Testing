@@ -1,0 +1,36 @@
+
+# Use official openjdk base image
+FROM openjdk:8-jre-alpine
+
+# Set Zookeeper version
+ENV ZOOKEEPER_VERSION=3.6.1
+ENV ZOOKEEPER_HOME=/opt/zookeeper
+ENV ZOOKEEPER_NAME=apache-zookeeper-${ZOOKEEPER_VERSION}
+
+# Install dependencies
+RUN apk update && apk add --no-cache curl bash
+
+# Download Zookeeper from the Apache archive
+RUN curl -sL "https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/${ZOOKEEPER_NAME}-bin.tar.gz" -o /tmp/zookeeper.tar.gz && \
+    tar -xzf /tmp/zookeeper.tar.gz -C /opt/ && \
+    mv /opt/${ZOOKEEPER_NAME}-bin /opt/zookeeper && \
+    rm /tmp/zookeeper.tar.gz
+
+# Set environment variables for Zookeeper
+ENV PATH="${ZOOKEEPER_HOME}/bin:${PATH}"
+
+# Create data directory
+RUN mkdir -p /opt/zookeeper/data
+
+# Expose necessary ports
+EXPOSE 2181 2888 3888
+
+# Add entrypoint script
+COPY entrypoint-zookeeper.sh /entrypoint-zookeeper.sh
+RUN chmod +x /entrypoint-zookeeper.sh
+
+# Set the entrypoint to run Zookeeper
+ENTRYPOINT ["/entrypoint-zookeeper.sh"]
+
+# Default command to start Zookeeper
+CMD ["/opt/zookeeper/bin/zkServer.sh", "start-foreground"]

@@ -1,0 +1,170 @@
+services:
+  zookeeper1:
+    image: imdhruv99/zookeeper:3.6.1
+    container_name: zookeeper1
+    environment:
+      - ZOOKEEPER_SERVER_ID=1
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_INIT_LIMIT=5
+      - ZOOKEEPER_SYNC_LIMIT=2
+      - ZOOKEEPER_SERVERS=zookeeper1:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper_data1:/opt/zookeeper/data
+    networks:
+      - kafka_network
+    restart: always
+
+  zookeeper2:
+    image: imdhruv99/zookeeper:3.6.1
+    container_name: zookeeper2
+    environment:
+      - ZOOKEEPER_SERVER_ID=2
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_INIT_LIMIT=5
+      - ZOOKEEPER_SYNC_LIMIT=2
+      - ZOOKEEPER_SERVERS=zookeeper1:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888
+    ports:
+      - "2182:2181"
+    volumes:
+      - zookeeper_data2:/opt/zookeeper/data
+    networks:
+      - kafka_network
+    restart: always
+
+  zookeeper3:
+    image: imdhruv99/zookeeper:3.6.1
+    container_name: zookeeper3
+    environment:
+      - ZOOKEEPER_SERVER_ID=3
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_INIT_LIMIT=5
+      - ZOOKEEPER_SYNC_LIMIT=2
+      - ZOOKEEPER_SERVERS=zookeeper1:2888:3888,zookeeper2:2888:3888,zookeeper3:2888:3888
+    ports:
+      - "2183:2181"
+    volumes:
+      - zookeeper_data3:/opt/zookeeper/data
+    networks:
+      - kafka_network
+    restart: always
+
+  kafka1:
+    image: imdhruv99/kafka:2.1.1
+    container_name: kafka1
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:29091,EXTERNAL://0.0.0.0:9091
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka1:29091,EXTERNAL://localhost:9091
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+    ports:
+      - "9091:9091"
+      - "29091:29091"
+    volumes:
+      - kafka_data1:/var/lib/kafka
+    networks:
+      - kafka_network
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    restart: always
+
+  kafka2:
+    image: imdhruv99/kafka:2.1.1
+    container_name: kafka2
+    environment:
+      - KAFKA_BROKER_ID=2
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka2:29092,EXTERNAL://localhost:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    volumes:
+      - kafka_data2:/var/lib/kafka
+    networks:
+      - kafka_network
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    restart: always
+
+  kafka3:
+    image: imdhruv99/kafka:2.1.1
+    container_name: kafka3
+    environment:
+      - KAFKA_BROKER_ID=3
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:29093,EXTERNAL://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka3:29093,EXTERNAL://localhost:9093
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+    ports:
+      - "9093:9093"
+      - "29093:29093"
+    volumes:
+      - kafka_data3:/var/lib/kafka
+    networks:
+      - kafka_network
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    restart: always
+
+  kafka4:
+    image: imdhruv99/kafka:2.1.1
+    container_name: kafka4
+    environment:
+      - KAFKA_BROKER_ID=4
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:29094,EXTERNAL://0.0.0.0:9094
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka4:29094,EXTERNAL://localhost:9094
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+    ports:
+      - "9094:9094"
+      - "29094:29094"
+    volumes:
+      - kafka_data4:/var/lib/kafka
+    networks:
+      - kafka_network
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    restart: always
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    networks:
+      - kafka_network
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:29091,kafka2:29092,kafka3:29093,kafka4:29094
+
+networks:
+  kafka_network:
+    driver: bridge
+
+volumes:
+  zookeeper_data1:
+  zookeeper_data2:
+  zookeeper_data3:
+  kafka_data1:
+  kafka_data2:
+  kafka_data3:
+  kafka_data4:
