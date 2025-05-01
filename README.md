@@ -62,7 +62,7 @@ The Kafka UI provides a web interface to manage and monitor Kafka clusters. It c
 
 ### 🚧 Next Steps
 
-1. Create Topics using CSV File
+#### 1. Create Topics using CSV File
 You can automate the process of creating Kafka topics across both Kafka clusters (version 2.1.1 and 3.7.2) using a Python script. The script will:
 
 - Accept a CSV file as input that defines topic configurations such as topic name, number of partitions, replication factor, retention policy, and cleanup policy.
@@ -78,7 +78,7 @@ You can automate the process of creating Kafka topics across both Kafka clusters
     test-topic-2,5,1,120000,compact
     ```
 
-2. Kafka Producer-Consumer Applications (Python, Java, Go)
+#### 2. Kafka Producer-Consumer Applications (Python, Java, Go)
 Once topics are created, it's time to generate concurrent load on both Kafka clusters using producer-consumer applications in Python, Java, and Go. Each application will:
 
 - Generate random data and produce it to the topics created in Step 1.
