@@ -11,9 +11,9 @@ services:
     ports:
       - "2181:2181"
     volumes:
-      - zookeeper_data1:/opt/zookeeper/data
+      - zookeeper_data1_211:/opt/zookeeper/data
     networks:
-      - kafka_network
+      - kafka_network_211
     restart: always
 
   zookeeper2:
@@ -28,9 +28,9 @@ services:
     ports:
       - "2182:2181"
     volumes:
-      - zookeeper_data2:/opt/zookeeper/data
+      - zookeeper_data2_211:/opt/zookeeper/data
     networks:
-      - kafka_network
+      - kafka_network_211
     restart: always
 
   zookeeper3:
@@ -45,9 +45,9 @@ services:
     ports:
       - "2183:2181"
     volumes:
-      - zookeeper_data3:/opt/zookeeper/data
+      - zookeeper_data3_211:/opt/zookeeper/data
     networks:
-      - kafka_network
+      - kafka_network_211
     restart: always
 
   kafka1:
@@ -64,9 +64,9 @@ services:
       - "9091:9091"
       - "29091:29091"
     volumes:
-      - kafka_data1:/var/lib/kafka
+      - kafka_data1_211:/var/lib/kafka
     networks:
-      - kafka_network
+      - kafka_network_211
     depends_on:
       - zookeeper1
       - zookeeper2
@@ -87,9 +87,9 @@ services:
       - "9092:9092"
       - "29092:29092"
     volumes:
-      - kafka_data2:/var/lib/kafka
+      - kafka_data2_211:/var/lib/kafka
     networks:
-      - kafka_network
+      - kafka_network_211
     depends_on:
       - zookeeper1
       - zookeeper2
@@ -110,9 +110,9 @@ services:
       - "9093:9093"
       - "29093:29093"
     volumes:
-      - kafka_data3:/var/lib/kafka
+      - kafka_data3_211:/var/lib/kafka
     networks:
-      - kafka_network
+      - kafka_network_211
     depends_on:
       - zookeeper1
       - zookeeper2
@@ -133,9 +133,9 @@ services:
       - "9094:9094"
       - "29094:29094"
     volumes:
-      - kafka_data4:/var/lib/kafka
+      - kafka_data4_211:/var/lib/kafka
     networks:
-      - kafka_network
+      - kafka_network_211
     depends_on:
       - zookeeper1
       - zookeeper2
@@ -157,14 +157,14 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:29091,kafka2:29092,kafka3:29093,kafka4:29094
 
 networks:
-  kafka_network:
+  kafka_network_211:
     driver: bridge
 
 volumes:
-  zookeeper_data1:
-  zookeeper_data2:
-  zookeeper_data3:
-  kafka_data1:
-  kafka_data2:
-  kafka_data3:
-  kafka_data4:
+  zookeeper_data1_211:
+  zookeeper_data2_211:
+  zookeeper_data3_211:
+  kafka_data1_211:
+  kafka_data2_211:
+  kafka_data3_211:
+  kafka_data4_211:

@@ -1,35 +1,25 @@
-# Set base image to OpenJDK
 FROM openjdk:8-jre-alpine
 
-# Define Kafka version and Scala version
 ENV KAFKA_VERSION=2.1.1
 ENV SCALA_VERSION=2.11
 ENV KAFKA_NAME=kafka_${SCALA_VERSION}-${KAFKA_VERSION}
 ENV KAFKA_ROOT=/opt
 ENV KAFKA_HOME=${KAFKA_ROOT}/kafka
 
-# Install dependencies
 RUN apk update && apk add --no-cache curl bash
 
-# Download Kafka from Apache Archive
 RUN curl -sL "https://archive.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_NAME}.tgz" | tar -xz -C /opt/ && \
     mv /opt/${KAFKA_NAME} /opt/kafka
 
-# Set environment variables
 ENV PATH="${KAFKA_HOME}/bin:${PATH}"
 
-# Create directories for logs and data
 RUN mkdir -p /var/lib/kafka/data
 
-# Expose Kafka ports
 EXPOSE 9091 9092 9093 9094 29091 29092 29093 29094
 
-# Copy the entrypoint script to container
 COPY entrypoint-kafka.sh /entrypoint-kafka.sh
 RUN chmod +x /entrypoint-kafka.sh
 
-# Use the entrypoint script to dynamically configure and start Kafka
 ENTRYPOINT ["/entrypoint-kafka.sh"]
 
-# Default command to start Kafka
 CMD ["/opt/kafka/bin/kafka-server-start.sh", "/opt/kafka/config/server.properties"]
