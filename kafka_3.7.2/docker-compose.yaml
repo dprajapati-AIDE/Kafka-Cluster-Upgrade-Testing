@@ -119,22 +119,6 @@ services:
       - zookeeper-3-372
     restart: always
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    ports:
-      - "18080:8080"
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=Kafka-3.7.2
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-1-372:19091,kafka-2-372:19093,kafka-3-372:19095
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper-1-372:2181,zookeeper-2-372:2181,zookeeper-3-372:2181
-    networks:
-      - kafka_network_372
-    depends_on:
-      - kafka-1-372
-      - kafka-2-372
-      - kafka-3-372
-
 networks:
   kafka_network_372:
     driver: bridge

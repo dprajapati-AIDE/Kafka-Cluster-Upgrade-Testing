@@ -119,20 +119,6 @@ services:
       - zookeeper-3-211
     restart: always
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    networks:
-      - kafka_network_211
-    depends_on:
-      - kafka-1-211
-      - kafka-2-211
-      - kafka-3-211
-    ports:
-      - "8080:8080"
-    environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1-211:29091,kafka-2-211:29092,kafka-3-211:29093
-
 networks:
   kafka_network_211:
     driver: bridge
