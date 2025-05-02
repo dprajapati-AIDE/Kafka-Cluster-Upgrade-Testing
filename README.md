@@ -36,38 +36,41 @@ This repository provides resources for setting up and testing Kafka clusters wit
 
 ### 🛠️ Build Docker Images
 
-To build Kafka and Zookeeper Docker images for each version:
+- To build Kafka and Zookeeper Docker images for each version:
 
-- 1. Navigate to the version-specific directory:
-    ```
-    cd kafka_<version>
-    ```
-- 2. Build Kafka image:
-    ```
-    docker build -t kafka:<version> -f Dockerfile.kafka .
-    ```
-- 3. Build Zookeeper image:
-    ```
-    docker build -t zookeeper:<version> -f Dockerfile.zookeeper .
-    ```
+    1. Navigate to the version-specific directory:
+        ```
+        cd kafka_<version>
+        ```
+
+    2. Build Kafka image:
+        ```
+        docker build -t kafka:<version> -f Dockerfile.kafka .
+        ```
+
+    3. Build Zookeeper image:
+        ```
+        docker build -t zookeeper:<version> -f Dockerfile.zookeeper .
+        ```
     > Replace <version> with either 2.1.1 or 3.7.2 as needed.
 
 ### 🚀 Run Kafka Clusters
 
-To start the Kafka clusters:
+- To start the Kafka clusters:
 
-- 1. From each version directory, run:
-    ```
-    docker compose up -d
-    ```
-- 2. Once both clusters are running, start the Kafka UI:
-    ```
-    cd kafka-ui
-    docker compose up -d
-    ```
+    1. From each version directory, run:
+        ```
+        docker compose up -d
+        ```
+
+    2. Once both clusters are running, start the Kafka UI:
+        ```
+        cd kafka-ui
+        docker compose up -d
+        ```
 
 ### 📊 Kafka UI
-The Kafka UI provides a web interface to manage and monitor Kafka clusters. It connects to both 2.1.1 and 3.7.2 clusters by default as configured in the kafka-ui/docker-compose.yaml file.
+- The Kafka UI provides a web interface to manage and monitor Kafka clusters. It connects to both 2.1.1 and 3.7.2 clusters by default as configured in the kafka-ui/docker-compose.yaml file.
 
 ### create topics
 
