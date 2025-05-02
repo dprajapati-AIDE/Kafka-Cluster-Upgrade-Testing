@@ -9,20 +9,29 @@ This repository provides resources for setting up and testing Kafka clusters wit
 ```
 .
 ├── README.md
-├── kafka-ui/
-│   └── docker-compose.yaml        # Kafka UI setup
-├── kafka_2.1.1/                   # Kafka 2.1.1 cluster setup
+├── kafka_2.1.1                             # Kafka 2.1.1 configuration
 │   ├── Dockerfile.kafka
 │   ├── Dockerfile.zookeeper
 │   ├── docker-compose.yaml
 │   ├── entrypoint-kafka.sh
 │   └── entrypoint-zookeeper.sh
-└── kafka_3.7.2/                   # Kafka 3.7.2 cluster setup
-    ├── Dockerfile.kafka
-    ├── Dockerfile.zookeeper
-    ├── docker-compose.yaml
-    ├── entrypoint-kafka.sh
-    └── entrypoint-zookeeper.sh
+├── kafka_3.7.2                             # Kafka 3.7.2 configuration
+│   ├── Dockerfile.kafka
+│   ├── Dockerfile.zookeeper
+│   ├── docker-compose.yaml
+│   ├── entrypoint-kafka.sh
+│   └── entrypoint-zookeeper.sh
+├── kafka_topic_manager                     # Automation to create multiple topics on cluster
+│   ├── __init__.py
+│   ├── csv_reader.py
+│   ├── logger.py
+│   ├── main.py
+│   ├── manager.py
+│   ├── topics
+│   │   └── topics.csv
+│   └── utils.py
+└── kafka_ui                                # User Interface to manage multiple kafka cluster
+    └── docker-compose.yaml
 ```
 
 ### 🛠️ Build Docker Images
@@ -60,25 +69,31 @@ To start the Kafka clusters:
 ### 📊 Kafka UI
 The Kafka UI provides a web interface to manage and monitor Kafka clusters. It connects to both 2.1.1 and 3.7.2 clusters by default as configured in the kafka-ui/docker-compose.yaml file.
 
+### create topics
+
+- #### Docker-Based Setup
+
+    - If you're using a Docker-based Kafka setup, mount the `kafka_topic_manager` module as a volume and run the appropriate command based on your Kafka version:
+
+        > Note: The following commands are based on the DNS configuration used in my Docker Compose setup. You may need to update the Zookeeper or Kafka broker addresses (zookeeper-1-211, kafka-1-372, etc.) to match your own environment.
+
+        **For Kafka 2.x:**
+        ```
+        python3 -u kafka_topic_manager/main.py --csv-file kafka_topic_manager/topics/topics.csv --kafka-bin /opt/kafka/bin --zookeeper zookeeper-1-211:2181 --replication-factor 1 --verbose
+        ```
+
+        **For Kafka 3.x:**
+        ```
+        python3 -u kafka_topic_manager/main.py --csv-file kafka_topic_manager/topics/topics.csv --kafka-bin /opt/kafka/bin --bootstrap-server kafka-1-372:19091 --replication-factor 1 --verbose
+        ```
+
+- #### VM-Based Kafka Cluster
+
+    - If you're working with a VM-based Kafka cluster, ensure the Kafka binaries are installed locally. Then, update the --zookeeper or --bootstrap-server parameters accordingly and run the appropriate command based on your Kafka version.
+
 ### 🚧 Next Steps
 
-#### 1. Create Topics using CSV File
-You can automate the process of creating Kafka topics across both Kafka clusters (version 2.1.1 and 3.7.2) using a Python script. The script will:
-
-- Accept a CSV file as input that defines topic configurations such as topic name, number of partitions, replication factor, retention policy, and cleanup policy.
-
-- Use the `argparse` module to accept cluster DNS or IP addresses as arguments for the Kafka clusters.
-
-- Use Python's Kafka admin libraries (like confluent_kafka or kafka-python) to programmatically create topics on both clusters.
-
-- Example CSV Format
-    ```
-    topic_name,num_partitions,replication_factor,retention_ms,cleanup_policy
-    test-topic-1,3,1,60000,delete
-    test-topic-2,5,1,120000,compact
-    ```
-
-#### 2. Kafka Producer-Consumer Applications (Python, Java, Go)
+#### Kafka Producer-Consumer Applications (Python, Java, Go)
 Once topics are created, it's time to generate concurrent load on both Kafka clusters using producer-consumer applications in Python, Java, and Go. Each application will:
 
 - Generate random data and produce it to the topics created in Step 1.
