@@ -26,7 +26,7 @@ dataDir=/opt/zookeeper/data
 clientPort=2181
 initLimit=${ZOOKEEPER_INIT_LIMIT}
 syncLimit=${ZOOKEEPER_SYNC_LIMIT}
-ZOO_4LW_COMMANDS_WHITELIST:${ZOOKEEPER_4LW_COMMANDS_WHITELIST}
+4lw.commands.whitelis=${ZOOKEEPER_4LW_COMMANDS_WHITELIST}
 
 # Performance tuning
 snapCount=100000
