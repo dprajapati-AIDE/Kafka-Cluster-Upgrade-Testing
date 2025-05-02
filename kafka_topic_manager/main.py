@@ -1,3 +1,5 @@
+import os
+import sys
 import argparse
 
 from logger import get_logger
@@ -37,11 +39,23 @@ def main():
     args = parse_arguments()
 
     if args.verbose:
-        logger.setLevel('DEBUG')
+        logger.setLevel(logging.DEBUG)
+        logger.debug("Verbose logging enabled")
+
+    kafka_topics_sh = os.path.join(args.kafka_bin, 'kafka-topics.sh')
+    if not os.path.exists(kafka_topics_sh):
+        logger.error(f"Kafka tools not found at: {kafka_topics_sh}")
+        logger.info("Please provide the correct path to Kafka bin directory")
+        sys.exit(1)
+
+    logger.info(f"Using ZooKeeper connection: {args.zk}:{args.zk_port}")
+    logger.info(f"Using Kafka bin directory: {args.kafka_bin}")
+    logger.info(f"Reading topics from: {args.csv_file}")
 
     manager = KafkaTopicManager(args)
     manager.manage_topics()
 
 
 if __name__ == '__main__':
+    import logging
     main()

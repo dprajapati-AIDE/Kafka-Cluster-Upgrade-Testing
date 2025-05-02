@@ -1,5 +1,4 @@
-
 topics,partitions,replication_factor,configs
 username,4,3,"retention.ms=604800000,retention.bytes=1073741824"
 address,2,3,"retention.ms=259200000,cleanup.policy=compact"
-shopping-list,2,3,"retention.ms=604800000,min.insync.replicas=2"
+shopping-cart,2,3,"retention.ms=604800000,min.insync.replicas=2"

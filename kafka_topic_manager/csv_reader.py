@@ -39,5 +39,7 @@ class ReadTopicFromCSV:
                         'configs': configs
                     }
                     topics.append(topic_info)
+            return topics
         except Exception as e:
             self.logger.error(f"Failed to read File: {e}")
+            return []

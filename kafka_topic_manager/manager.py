@@ -29,7 +29,9 @@ class KafkaTopicManager:
             self.logger.error(f"Failed to list topics: {output}")
             return []
 
-        return [topic for topic in output.strip().split('\n') if topic]
+        topics = [topic for topic in output.strip().split('\n') if topic]
+        self.logger.debug(f"Existing topics: {topics}")
+        return topics
 
     def describe_topics(self):
         topics_map = {}
@@ -44,22 +46,24 @@ class KafkaTopicManager:
             return {}
 
         for line in output.strip().split('\n'):
+            if not line:
+                continue
+
             result = RE_TOPIC_DESCRIPTION.search(line)
             if result:
                 topic = result.group("topic").strip()
-                configs_str = result.group("configs")
+                configs_str = result.group("configs") or ""
 
                 topics_map[topic] = {
                     "topic": topic,
                     "partitions": int(result.group("partitions")),
                     "replication_factor": int(result.group("replication_factor")),
-                    "configs": self.parse_topic_configs(configs_str)
+                    "configs": self.csv_reader.parse_topic_configs(configs_str)
                 }
 
         return topics_map
 
     def create_topic(self, topic, partitions, replication_factor, configs):
-
         cmd = [
             f"{self.kafka_bin}/kafka-topics.sh",
             "--zookeeper", self.broker,
@@ -69,6 +73,8 @@ class KafkaTopicManager:
             "--replication-factor", str(replication_factor)
         ]
 
+        self.logger.info(
+            f"Creating topic: {topic} with partitions: {partitions}, replication-factor: {replication_factor}")
         exit_code, output = execute_command(cmd, self.args.dry_run)
 
         if exit_code != 0:
@@ -89,6 +95,8 @@ class KafkaTopicManager:
             "--partitions", str(partitions)
         ]
 
+        self.logger.info(
+            f"Updating partitions for topic {topic} to {partitions}")
         exit_code, output = execute_command(cmd, self.args.dry_run)
 
         if exit_code != 0:
@@ -106,15 +114,42 @@ class KafkaTopicManager:
             return True
 
         config_str = self.format_configs_string(configs)
-        cmd = [
-            f"{self.kafka_bin}/kafka-configs.sh",
-            "--zookeeper", self.broker,
-            "--entity-type", "topics",
-            "--entity-name", topic,
-            "--alter",
-            "--add-config", config_str
-        ]
 
+        kafka_configs_sh = f"{self.kafka_bin}/kafka-configs.sh"
+
+        try:
+            import os
+            if os.path.exists(kafka_configs_sh):
+                cmd = [
+                    kafka_configs_sh,
+                    "--zookeeper", self.broker,
+                    "--entity-type", "topics",
+                    "--entity-name", topic,
+                    "--alter",
+                    "--add-config", config_str
+                ]
+            else:
+                self.logger.warning(
+                    f"kafka-configs.sh not found, falling back to kafka-topics.sh for config updates")
+                cmd = [
+                    f"{self.kafka_bin}/kafka-topics.sh",
+                    "--zookeeper", self.broker,
+                    "--alter",
+                    "--topic", topic,
+                    "--config", config_str
+                ]
+        except Exception as e:
+            self.logger.warning(
+                f"Error checking for kafka-configs.sh: {e}, using kafka-topics.sh instead")
+            cmd = [
+                f"{self.kafka_bin}/kafka-topics.sh",
+                "--zookeeper", self.broker,
+                "--alter",
+                "--topic", topic,
+                "--config", config_str
+            ]
+
+        self.logger.info(f"Updating config for topic {topic}: {config_str}")
         exit_code, output = execute_command(cmd, self.args.dry_run)
 
         if exit_code != 0:
@@ -146,12 +181,27 @@ class KafkaTopicManager:
             return
 
         # describe topics
-        existing_topics = self.describe_topics()
-        self.logger.debug(f"Existing topics: {list(existing_topics.keys())}")
+        try:
+            existing_topics = self.describe_topics()
+            self.logger.debug(
+                f"Existing topics: {list(existing_topics.keys())}")
+        except Exception as e:
+            self.logger.error(f"Error getting existing topics: {e}")
+            existing_topics = {}
 
-        topics_to_manage = self.csv_reader.read_csv_topics(
-            self.args.csv_file, default_replication_factor)
-        self.logger.info(f"Found {len(topics_to_manage)} topics in CSV file")
+        try:
+            topics_to_manage = self.csv_reader.read_csv_topics(
+                self.args.csv_file, default_replication_factor)
+            if topics_to_manage:
+                self.logger.info(
+                    f"Found {len(topics_to_manage)} topics in CSV file")
+            else:
+                self.logger.error(
+                    "No topics found in CSV file or error reading file")
+                return
+        except Exception as e:
+            self.logger.error(f"Error reading CSV file: {e}")
+            return
 
         # process each topic
         for topic_info in topics_to_manage:
