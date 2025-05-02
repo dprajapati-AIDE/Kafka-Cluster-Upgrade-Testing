@@ -73,8 +73,6 @@ class KafkaTopicManager:
             "--replication-factor", str(replication_factor)
         ]
 
-        self.logger.info(
-            f"Creating topic: {topic} with partitions: {partitions}, replication-factor: {replication_factor}")
         exit_code, output = execute_command(cmd, self.args.dry_run)
 
         if exit_code != 0:
