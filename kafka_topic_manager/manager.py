@@ -128,16 +128,6 @@ class KafkaTopicManager:
                     "--alter",
                     "--add-config", config_str
                 ]
-            else:
-                self.logger.warning(
-                    f"kafka-configs.sh not found, falling back to kafka-topics.sh for config updates")
-                cmd = [
-                    f"{self.kafka_bin}/kafka-topics.sh",
-                    "--zookeeper", self.broker,
-                    "--alter",
-                    "--topic", topic,
-                    "--config", config_str
-                ]
         except Exception as e:
             self.logger.warning(
                 f"Error checking for kafka-configs.sh: {e}, using kafka-topics.sh instead")
