@@ -14,12 +14,12 @@ def execute_command(cmd, dry_run=False):
 
     if dry_run:
         logger.info(f"[DRY RUN] {cmd_str}")
-        return
+        return 0, ""
 
     try:
         output = subprocess.check_output(
-            cmd, stderr=subprocess.STDOUT, text=True)
-        return output
+            cmd, stderr=subprocess.STDOUT, universal_newlines=True)
+        return 0, output
     except subprocess.CalledProcessError as e:
         logger.error(f"Command failed with exit code {e.returncode}")
         logger.error(f"Output: {e.output}")

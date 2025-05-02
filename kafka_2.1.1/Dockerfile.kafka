@@ -6,7 +6,7 @@ ENV KAFKA_NAME=kafka_${SCALA_VERSION}-${KAFKA_VERSION}
 ENV KAFKA_ROOT=/opt
 ENV KAFKA_HOME=${KAFKA_ROOT}/kafka
 
-RUN apk update && apk add --no-cache curl bash
+RUN apk update && apk add --no-cache curl bash python3 py3-pip
 
 RUN curl -sL "https://archive.apache.org/dist/kafka/${KAFKA_VERSION}/${KAFKA_NAME}.tgz" | tar -xz -C /opt/ && \
     mv /opt/${KAFKA_NAME} /opt/kafka

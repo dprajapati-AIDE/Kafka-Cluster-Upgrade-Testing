@@ -27,8 +27,9 @@ def parse_arguments():
                         help='Default replication factor for new topics if not specified in CSV')
 
     # Operation modes
-    parser.add_argument('--dry-run', action='store_true',
+    parser.add_argument('--dry-run', type=bool, default=False,
                         help='Print commands without executing them')
+
     parser.add_argument('--verbose', '-v', action='store_true',
                         help='Enable verbose logging')
 

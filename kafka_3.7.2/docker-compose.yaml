@@ -68,6 +68,7 @@ services:
       - "19092:19092"
     volumes:
       - kafka_data1_372:/var/lib/kafka
+      - ../kafka_topic_manager:/kafka_topic_manager
     networks:
       - kafka_network_372
     depends_on:
