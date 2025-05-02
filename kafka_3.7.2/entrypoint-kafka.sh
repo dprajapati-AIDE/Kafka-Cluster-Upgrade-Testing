@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Kafka configuration variables (default values)
 KAFKA_BROKER_ID=${KAFKA_BROKER_ID:-1}
 KAFKA_LISTENERS=${KAFKA_LISTENERS:-"INTERNAL://0.0.0.0:19091,EXTERNAL://0.0.0.0:19092"}
 KAFKA_ADVERTISED_LISTENERS=${KAFKA_ADVERTISED_LISTENERS:-"INTERNAL://kafka-1-372:19091,EXTERNAL://localhost:19092"}
@@ -9,7 +8,6 @@ KAFKA_INTER_BROKER_LISTENER_NAME=${KAFKA_INTER_BROKER_LISTENER_NAME:-"INTERNAL"}
 KAFKA_ZOOKEEPER_CONNECT=${KAFKA_ZOOKEEPER_CONNECT:-"zookeeper-1-372:2181,zookeeper-2-372:2181,zookeeper-3-372:2181"}
 KAFKA_LOG_DIRS=${KAFKA_LOG_DIRS:-"/var/lib/kafka/data"}
 
-# Log the configuration
 echo "Starting Kafka 3.7.2 with the following configuration:"
 echo "  KAFKA_BROKER_ID=${KAFKA_BROKER_ID}"
 echo "  KAFKA_LISTENERS=${KAFKA_LISTENERS}"
@@ -19,10 +17,8 @@ echo "  KAFKA_INTER_BROKER_LISTENER_NAME=${KAFKA_INTER_BROKER_LISTENER_NAME}"
 echo "  KAFKA_ZOOKEEPER_CONNECT=${KAFKA_ZOOKEEPER_CONNECT}"
 echo "  KAFKA_LOG_DIRS=${KAFKA_LOG_DIRS}"
 
-# Create necessary directories
 mkdir -p ${KAFKA_LOG_DIRS}
 
-# Dynamically create the server.properties file
 cat <<EOF > /opt/kafka/config/server.properties
 # Broker settings
 broker.id=${KAFKA_BROKER_ID}
@@ -53,6 +49,5 @@ log.segment.bytes=1073741824
 log.retention.check.interval.ms=300000
 EOF
 
-# Start Kafka server
 echo "Starting Kafka..."
 exec "$@"
