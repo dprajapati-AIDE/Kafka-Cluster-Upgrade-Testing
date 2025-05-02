@@ -1,10 +1,10 @@
 import re
+import os
 
 from csv_reader import ReadTopicFromCSV
 from logger import get_logger
-from utils import execute_command, get_broker_connection
+from utils import execute_command
 
-# Regular expression to extract topic information from kafka-topics --describe output
 RE_TOPIC_DESCRIPTION = re.compile(
     r"Topic:(?P<topic>\S+)\s+PartitionCount:(?P<partitions>\d+)\s+ReplicationFactor:(?P<replication_factor>\d+)\s+Configs:(?P<configs>.+)?")
 
@@ -16,12 +16,24 @@ class KafkaTopicManager:
         self.kafka_bin = args.kafka_bin
         self.dry_run = args.dry_run
         self.logger = get_logger()
-        self.broker = get_broker_connection(args.zk, args.zk_port)
         self.csv_reader = ReadTopicFromCSV()
 
+        if self.args.bootstrap_server:
+            self.connection_mode = 'bootstrap'
+            self.connection_target = self.args.bootstrap_server
+        else:
+            self.connection_mode = 'zookeeper'
+            self.connection_target = self.args.zookeeper
+
+    def get_connection_flag(self):
+        if self.connection_mode == 'bootstrap':
+            return ['--bootstrap-server', self.connection_target]
+        else:
+            return ['--zookeeper', self.connection_target]
+
     def list_topics(self):
-        cmd = [f"{self.kafka_bin}/kafka-topics.sh",
-               "--zookeeper", self.broker, "--list"]
+        cmd = [f"{self.kafka_bin}/kafka-topics.sh"] + \
+            self.get_connection_flag() + ["--list"]
 
         exit_code, output = execute_command(cmd, self.args.dry_run)
 
@@ -36,8 +48,8 @@ class KafkaTopicManager:
     def describe_topics(self):
         topics_map = {}
 
-        cmd = [f"{self.kafka_bin}/kafka-topics.sh",
-               "--zookeeper", self.broker, "--describe"]
+        cmd = [f"{self.kafka_bin}/kafka-topics.sh"] + \
+            self.get_connection_flag() + ["--describe"]
 
         exit_code, output = execute_command(cmd, self.args.dry_run)
 
@@ -65,8 +77,8 @@ class KafkaTopicManager:
 
     def create_topic(self, topic, partitions, replication_factor, configs):
         cmd = [
-            f"{self.kafka_bin}/kafka-topics.sh",
-            "--zookeeper", self.broker,
+            f"{self.kafka_bin}/kafka-topics.sh"
+        ] + self.get_connection_flag() + [
             "--create",
             "--topic", topic,
             "--partitions", str(partitions),
@@ -86,8 +98,8 @@ class KafkaTopicManager:
 
     def update_topic_partitions(self, topic, partitions):
         cmd = [
-            f"{self.kafka_bin}/kafka-topics.sh",
-            "--zookeeper", self.broker,
+            f"{self.kafka_bin}/kafka-topics.sh"
+        ] + self.get_connection_flag() + [
             "--alter",
             "--topic", topic,
             "--partitions", str(partitions)
@@ -112,29 +124,30 @@ class KafkaTopicManager:
             return True
 
         config_str = self.format_configs_string(configs)
-
         kafka_configs_sh = f"{self.kafka_bin}/kafka-configs.sh"
 
-        try:
-            import os
-            if os.path.exists(kafka_configs_sh):
-                cmd = [
-                    kafka_configs_sh,
-                    "--zookeeper", self.broker,
-                    "--entity-type", "topics",
-                    "--entity-name", topic,
-                    "--alter",
-                    "--add-config", config_str
-                ]
-        except Exception as e:
-            self.logger.warning(
-                f"Error checking for kafka-configs.sh: {e}, using kafka-topics.sh instead")
+        if not os.path.exists(kafka_configs_sh):
+            self.logger.error(
+                f"kafka-configs.sh not found at {kafka_configs_sh}")
+            return False
+
+        if self.connection_mode == 'bootstrap':
             cmd = [
-                f"{self.kafka_bin}/kafka-topics.sh",
-                "--zookeeper", self.broker,
+                kafka_configs_sh,
+                "--bootstrap-server", self.connection_target,
+                "--entity-type", "topics",
+                "--entity-name", topic,
                 "--alter",
-                "--topic", topic,
-                "--config", config_str
+                "--add-config", config_str
+            ]
+        else:
+            cmd = [
+                kafka_configs_sh,
+                "--zookeeper", self.connection_target,
+                "--entity-type", "topics",
+                "--entity-name", topic,
+                "--alter",
+                "--add-config", config_str
             ]
 
         self.logger.info(f"Updating config for topic {topic}: {config_str}")
@@ -149,8 +162,8 @@ class KafkaTopicManager:
 
     def delete_topic(self, topic):
         cmd = [
-            f"{self.kafka_bin}/kafka-topics.sh",
-            "--zookeeper", self.broker,
+            f"{self.kafka_bin}/kafka-topics.sh"
+        ] + self.get_connection_flag() + [
             "--delete",
             "--topic", topic
         ]

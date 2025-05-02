@@ -5,10 +5,6 @@ from logger import get_logger
 logger = get_logger()
 
 
-def get_broker_connection(zk, port):
-    return f"{zk}:{port}"
-
-
 def execute_command(cmd, dry_run=False):
     cmd_str = " ".join(cmd)
 

@@ -19,8 +19,10 @@ def parse_arguments():
                         help='Path to Kafka bin directory with the CLI tools')
 
     # Kafka connection options
-    parser.add_argument('--zk', default='localhost', help='Zookeeper hostname')
-    parser.add_argument('--zk-port', default='2181', help='Zookeeper port')
+    parser.add_argument('--zookeeper', default='localhost:2181',
+                        help='Zookeeper hostname (default: %(default)s)')
+    parser.add_argument('--bootstrap-server',
+                        help='Kafka bootstrap server address')
 
     # Topic configuration defaults
     parser.add_argument('--replication-factor', type=int, default=3,
@@ -49,7 +51,7 @@ def main():
         logger.info("Please provide the correct path to Kafka bin directory")
         sys.exit(1)
 
-    logger.info(f"Using ZooKeeper connection: {args.zk}:{args.zk_port}")
+    logger.info(f"Using ZooKeeper connection: {args.zookeeper}")
     logger.info(f"Using Kafka bin directory: {args.kafka_bin}")
     logger.info(f"Reading topics from: {args.csv_file}")
 
