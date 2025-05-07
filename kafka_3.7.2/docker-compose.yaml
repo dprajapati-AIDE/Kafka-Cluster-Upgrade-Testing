@@ -1,6 +1,7 @@
 services:
   zookeeper-1-372:
     image: imdhruv99/zookeeper:3.8.3
+    platform: linux/arm64
     container_name: zookeeper-1-372
     environment:
       - ZOOKEEPER_SERVER_ID=1
@@ -19,6 +20,7 @@ services:
 
   zookeeper-2-372:
     image: imdhruv99/zookeeper:3.8.3
+    platform: linux/arm64
     container_name: zookeeper-2-372
     environment:
       - ZOOKEEPER_SERVER_ID=2
@@ -37,6 +39,7 @@ services:
 
   zookeeper-3-372:
     image: imdhruv99/zookeeper:3.8.3
+    platform: linux/arm64
     container_name: zookeeper-3-372
     environment:
       - ZOOKEEPER_SERVER_ID=3
@@ -55,6 +58,7 @@ services:
 
   kafka-1-372:
     image: imdhruv99/kafka:3.7.2
+    platform: linux/arm64
     container_name: kafka-1-372
     environment:
       - KAFKA_BROKER_ID=1
@@ -79,6 +83,7 @@ services:
 
   kafka-2-372:
     image: imdhruv99/kafka:3.7.2
+    platform: linux/arm64
     container_name: kafka-2-372
     environment:
       - KAFKA_BROKER_ID=2
@@ -102,6 +107,7 @@ services:
 
   kafka-3-372:
     image: imdhruv99/kafka:3.7.2
+    platform: linux/arm64
     container_name: kafka-3-372
     environment:
       - KAFKA_BROKER_ID=3
