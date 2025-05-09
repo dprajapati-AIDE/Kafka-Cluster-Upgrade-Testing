@@ -1,0 +1,21 @@
+logging:
+  level: "info"
+  encoding: "json"
+  output: "stdout"
+
+
+kafka:
+  clusters:
+    - name: "kafka-2.1.1"
+      version: "2.1.1"
+      brokers:
+        - "localhost:9091"
+        - "localhost:9092"
+        - "localhost:9093"
+
+    - name: "kafka-3.7.2"
+      version: "3.7.2"
+      brokers:
+        - "localhost:19092"
+        - "localhost:19094"
+        - "localhost:19096"
