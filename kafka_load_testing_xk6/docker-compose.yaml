@@ -1,0 +1,252 @@
+services:
+  zookeeper-1-372:
+    image: imdhruv99/zookeeper:3.8.3
+    platform: linux/arm64
+    container_name: zookeeper-1-372
+    environment:
+      - ZOOKEEPER_SERVER_ID=1
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_INIT_LIMIT=5
+      - ZOOKEEPER_SYNC_LIMIT=2
+      - ZOO_4LW_COMMANDS_WHITELIST=ruok,stat,mntr
+      - ZOOKEEPER_SERVERS=zookeeper-1-372:2888:3888,zookeeper-2-372:2888:3888,zookeeper-3-372:2888:3888
+    ports:
+      - "12181:2181"
+    volumes:
+      - zookeeper_data1_372:/opt/zookeeper/data
+    networks:
+      - kafka_network_372
+    restart: always
+
+  zookeeper-2-372:
+    image: imdhruv99/zookeeper:3.8.3
+    platform: linux/arm64
+    container_name: zookeeper-2-372
+    environment:
+      - ZOOKEEPER_SERVER_ID=2
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_INIT_LIMIT=5
+      - ZOOKEEPER_SYNC_LIMIT=2
+      - ZOO_4LW_COMMANDS_WHITELIST=ruok,stat,mntr
+      - ZOOKEEPER_SERVERS=zookeeper-1-372:2888:3888,zookeeper-2-372:2888:3888,zookeeper-3-372:2888:3888
+    ports:
+      - "12182:2181"
+    volumes:
+      - zookeeper_data2_372:/opt/zookeeper/data
+    networks:
+      - kafka_network_372
+    restart: always
+
+  zookeeper-3-372:
+    image: imdhruv99/zookeeper:3.8.3
+    platform: linux/arm64
+    container_name: zookeeper-3-372
+    environment:
+      - ZOOKEEPER_SERVER_ID=3
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_INIT_LIMIT=5
+      - ZOOKEEPER_SYNC_LIMIT=2
+      - ZOO_4LW_COMMANDS_WHITELIST=ruok,stat,mntr
+      - ZOOKEEPER_SERVERS=zookeeper-1-372:2888:3888,zookeeper-2-372:2888:3888,zookeeper-3-372:2888:3888
+    ports:
+      - "12183:2181"
+    volumes:
+      - zookeeper_data3_372:/opt/zookeeper/data
+    networks:
+      - kafka_network_372
+    restart: always
+
+  kafka-1-372:
+    image: imdhruv99/kafka:3.7.2
+    platform: linux/arm64
+    container_name: kafka-1-372
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:19091,EXTERNAL://0.0.0.0:19092
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka-1-372:19091,EXTERNAL://localhost:19092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-1-372:2181,zookeeper-2-372:2181,zookeeper-3-372:2181
+      - KAFKA_JMX_PORT=9999
+      - JMX_PORT=9999
+      - KAFKA_JMX_HOSTNAME=kafka-1-372
+      - KAFKA_JMX_OPTS=-Djava.rmi.server.hostname=kafka-1-372 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.rmi.port=9999
+
+    ports:
+      - "19091:19091"
+      - "19092:19092"
+      - "9999:9999"
+    volumes:
+      - kafka_data1_372:/var/lib/kafka
+      - ../kafka_topic_manager:/kafka_topic_manager
+    networks:
+      - kafka_network_372
+    depends_on:
+      - zookeeper-1-372
+      - zookeeper-2-372
+      - zookeeper-3-372
+    restart: always
+
+  kafka-2-372:
+    image: imdhruv99/kafka:3.7.2
+    platform: linux/arm64
+    container_name: kafka-2-372
+    environment:
+      - KAFKA_BROKER_ID=2
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:19093,EXTERNAL://0.0.0.0:19094
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka-2-372:19093,EXTERNAL://localhost:19094
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-1-372:2181,zookeeper-2-372:2181,zookeeper-3-372:2181
+      - KAFKA_JMX_PORT=9998
+      - JMX_PORT=9998
+      - KAFKA_JMX_HOSTNAME=kafka-2-372
+      - KAFKA_JMX_OPTS=-Djava.rmi.server.hostname=kafka-2-372 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9998 -Dcom.sun.management.jmxremote.rmi.port=9998
+    ports:
+      - "19093:19093"
+      - "19094:19094"
+      - "9998:9998"
+    volumes:
+      - kafka_data2_372:/var/lib/kafka
+    networks:
+      - kafka_network_372
+    depends_on:
+      - zookeeper-1-372
+      - zookeeper-2-372
+      - zookeeper-3-372
+    restart: always
+
+  kafka-3-372:
+    image: imdhruv99/kafka:3.7.2
+    platform: linux/arm64
+    container_name: kafka-3-372
+    environment:
+      - KAFKA_BROKER_ID=3
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:19095,EXTERNAL://0.0.0.0:19096
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka-3-372:19095,EXTERNAL://localhost:19096
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-1-372:2181,zookeeper-2-372:2181,zookeeper-3-372:2181
+      - KAFKA_JMX_PORT=9997
+      - JMX_PORT=9997
+      - KAFKA_JMX_HOSTNAME=kafka-3-372
+      - KAFKA_JMX_OPTS=-Djava.rmi.server.hostname=kafka-3-372 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9997 -Dcom.sun.management.jmxremote.rmi.port=9997
+    ports:
+      - "19095:19095"
+      - "19096:19096"
+      - "9997:9997"
+    volumes:
+      - kafka_data3_372:/var/lib/kafka
+    networks:
+      - kafka_network_372
+    depends_on:
+      - zookeeper-1-372
+      - zookeeper-2-372
+      - zookeeper-3-372
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - kafka_network_372
+
+  kafka-jmx-exporter-1:
+    image: bitnami/jmx-exporter:latest
+    container_name: kafka-jmx-exporter-1
+    environment:
+      - JMX_HOST=kafka-1-372
+      - JMX_PORT=9999
+    volumes:
+      - ./kafka-jmx-config-1.yml:/etc/jmx_exporter/config.yml
+    command:
+      - "5556"
+      - "/etc/jmx_exporter/config.yml"
+    ports:
+      - "9308:5556"
+    networks:
+      - kafka_network_372
+    depends_on:
+      - kafka-1-372
+    restart: always
+
+  kafka-jmx-exporter-2:
+    image: bitnami/jmx-exporter:latest
+    container_name: kafka-jmx-exporter-2
+    environment:
+      - JMX_HOST=kafka-2-372
+      - JMX_PORT=9998
+    volumes:
+      - ./kafka-jmx-config-2.yml:/etc/jmx_exporter/config.yml
+    command:
+      - "5556"
+      - "/etc/jmx_exporter/config.yml"
+    ports:
+      - "9309:5556"
+    networks:
+      - kafka_network_372
+    depends_on:
+      - kafka-2-372
+    restart: always
+
+  kafka-jmx-exporter-3:
+    image: bitnami/jmx-exporter:latest
+    container_name: kafka-jmx-exporter-3
+    environment:
+      - JMX_HOST=kafka-3-372
+      - JMX_PORT=9997
+    volumes:
+      - ./kafka-jmx-config-3.yml:/etc/jmx_exporter/config.yml
+    command:
+      - "5556"
+      - "/etc/jmx_exporter/config.yml"
+    ports:
+      - "9310:5556"
+    networks:
+      - kafka_network_372
+    depends_on:
+      - kafka-3-372
+    restart: always
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    networks:
+      - kafka_network_372
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin@123
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana-prom-datasource.yml:/etc/grafana/provisioning/datasources/prometheus.yml
+    networks:
+      - kafka_network_372
+
+networks:
+  kafka_network_372:
+    driver: bridge
+
+volumes:
+  zookeeper_data1_372:
+  zookeeper_data2_372:
+  zookeeper_data3_372:
+  kafka_data1_372:
+  kafka_data2_372:
+  kafka_data3_372:
+  prometheus_data:
+  grafana_data:
