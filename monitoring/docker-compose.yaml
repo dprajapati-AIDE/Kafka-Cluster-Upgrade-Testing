@@ -1,0 +1,50 @@
+services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    networks:
+      - kafka_211_kafka_network_211
+      - kafka_372_kafka_network_372
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin@123
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana-prom-datasource.yml:/etc/grafana/provisioning/datasources/prometheus.yml
+      - ./dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana-dashboard-provisioning.yml:/etc/grafana/provisioning/dashboards/dashboard-config.yml
+    networks:
+      - kafka_211_kafka_network_211
+      - kafka_372_kafka_network_372
+
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - kafka_211_kafka_network_211
+      - kafka_372_kafka_network_372
+
+networks:
+  kafka_211_kafka_network_211:
+    external: true
+  kafka_372_kafka_network_372:
+    external: true
+
+volumes:
+  prometheus_data:
+  grafana_data:
