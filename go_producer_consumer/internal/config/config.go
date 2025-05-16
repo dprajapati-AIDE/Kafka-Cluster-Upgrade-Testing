@@ -32,7 +32,7 @@ type ClusterConfig struct {
 func LoadConfig(configPath string) (*Config, error) {
 
 	if configPath == "" {
-		configPath = "config/config.yaml"
+		configPath = "../config/config.yaml"
 	}
 
 	data, err := os.ReadFile(configPath)
