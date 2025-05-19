@@ -12,6 +12,21 @@ kafka:
         - "localhost:9091"
         - "localhost:9092"
         - "localhost:9093"
+      topics:
+        - device: "firewall"
+          name: "juniper.firewall.SRX"
+          partitions: 3
+          replication_factor: 2
+          config:
+            cleanup.policy: "delete"
+            retention.ms: "604800000"
+        - device: "router"
+          name: "juniper.router.SSR"
+          partitions: 3
+          replication_factor: 2
+          config:
+            cleanup.policy: "delete"
+            retention.ms: "604800000"
 
     - name: "kafka-3.7.2"
       version: "3.7.2"
@@ -19,3 +34,25 @@ kafka:
         - "localhost:19092"
         - "localhost:19094"
         - "localhost:19096"
+      topics:
+        - device: "firewall"
+          name: "juniper.firewall.SRX"
+          partitions: 3
+          replication_factor: 2
+          config:
+            cleanup.policy: "delete"
+            retention.ms: "604800000"
+        - device: "router"
+          name: "juniper.router.SSR"
+          partitions: 3
+          replication_factor: 2
+          config:
+            cleanup.policy: "delete"
+            retention.ms: "604800000"
+devices:
+  vendor: "Juniper"
+  types:
+    firewall:
+      - SRX
+    router:
+      - SSR
