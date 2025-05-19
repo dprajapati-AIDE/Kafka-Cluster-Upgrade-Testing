@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"go_producer_consumer/internal/config"
+	"go_producer_consumer/internal/consumer"
 	"go_producer_consumer/internal/kafka"
 	"go_producer_consumer/internal/logger"
+	"go_producer_consumer/internal/producer"
 	"go_producer_consumer/internal/topic"
 	"go_producer_consumer/internal/utils"
 	"os"
@@ -16,6 +18,9 @@ import (
 )
 
 func main() {
+
+	role := os.Getenv("APP_ROLE") // producer, consumer, both
+
 	// Load config
 	cfg, err := config.LoadConfig("")
 	if err != nil {
@@ -28,9 +33,9 @@ func main() {
 	}
 	defer logger.Sync()
 
-	logger.Info("Application started")
+	logger.Info("Application started", zap.String("role", role))
 
-	// Create a context to handle graceful shutdown
+	// context to handle graceful shutdown
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
@@ -62,6 +67,39 @@ func main() {
 		}
 
 		clients = append(clients, client)
+	}
+
+	// launch producer or both role
+	if role == "producer" || role == "both" {
+		for _, cluster := range cfg.Kafka.Clusters {
+			producer, err := producer.NewProducer(&cluster)
+			if err != nil {
+				logger.Error("Producer initialization failed", zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
+				continue
+			}
+
+			for _, topic := range cluster.Topics {
+				if err := producer.ProduceMessage(topic.Name, 10); err != nil {
+					logger.Error("Error sending message", zap.String("func", utils.GetFunctionName(1)), zap.String("topic", topic.Name), zap.Error(err))
+				}
+			}
+		}
+	}
+
+	// launch consumer or both role
+	if role == "consumer" || role == "both" {
+		for _, cluster := range cfg.Kafka.Clusters {
+			var topics []string
+			for _, topic := range cluster.Topics {
+				topics = append(topics, topic.Name)
+			}
+			go func(c config.ClusterConfig) {
+				err := consumer.StartConsumerGroup(&c, "juniper-group", topics)
+				if err != nil {
+					logger.Error("Consumer group failed", zap.String("cluster", c.Name), zap.Error(err))
+				}
+			}(cluster)
+		}
 	}
 
 	// Wait for interrupt signal (Ctrl+C)
