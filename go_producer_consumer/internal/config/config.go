@@ -32,11 +32,8 @@ type ClusterConfig struct {
 }
 
 type TopicConfig struct {
-	Device            string            `yaml:"device"`
-	Name              string            `yaml:"name"`
-	Partitions        int               `yaml:"partitions"`
-	ReplicationFactor int               `yaml:"replication_factor"`
-	Config            map[string]string `yaml:"config"`
+	Device string `yaml:"device"`
+	Name   string `yaml:"name"`
 }
 
 type DevicesConfig struct {
