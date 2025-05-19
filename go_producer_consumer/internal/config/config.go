@@ -86,13 +86,7 @@ func validateConfig(config *Config) error {
 		}
 		for _, topic := range cluster.Topics {
 			if topic.Device == "" || topic.Name == "" {
-				return fmt.Errorf("invalid topic config in cluster %s: device and name are required", cluster.Name)
-			}
-			if topic.Partitions <= 0 {
-				return fmt.Errorf("invalid partitions for topic %s in cluster %s", topic.Name, cluster.Name)
-			}
-			if topic.ReplicationFactor <= 0 {
-				return fmt.Errorf("invalid replication_factor for topic %s in cluster %s", topic.Name, cluster.Name)
+				return fmt.Errorf("invalid topic configuration in cluster %s", cluster.Name)
 			}
 		}
 	}

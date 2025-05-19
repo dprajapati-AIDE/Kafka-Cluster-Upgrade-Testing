@@ -15,18 +15,8 @@ kafka:
       topics:
         - device: "firewall"
           name: "juniper.firewall.SRX"
-          partitions: 3
-          replication_factor: 2
-          config:
-            cleanup.policy: "delete"
-            retention.ms: "604800000"
         - device: "router"
           name: "juniper.router.SSR"
-          partitions: 3
-          replication_factor: 2
-          config:
-            cleanup.policy: "delete"
-            retention.ms: "604800000"
 
     - name: "kafka-3.7.2"
       version: "3.7.2"
@@ -37,18 +27,9 @@ kafka:
       topics:
         - device: "firewall"
           name: "juniper.firewall.SRX"
-          partitions: 3
-          replication_factor: 2
-          config:
-            cleanup.policy: "delete"
-            retention.ms: "604800000"
         - device: "router"
           name: "juniper.router.SSR"
-          partitions: 3
-          replication_factor: 2
-          config:
-            cleanup.policy: "delete"
-            retention.ms: "604800000"
+
 devices:
   vendor: "Juniper"
   types:
