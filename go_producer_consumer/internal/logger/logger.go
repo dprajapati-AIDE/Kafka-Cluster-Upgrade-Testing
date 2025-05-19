@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -43,18 +44,27 @@ func Initialize(level, encoding, output string) error {
 		return fmt.Errorf("invalid log encoding: %s", encoding)
 	}
 
-	// Set up the log output destination
-	var writeSyncer zapcore.WriteSyncer
-	switch strings.ToLower(output) {
-	case "stdout":
-		writeSyncer = zapcore.AddSync(os.Stdout)
-	default:
-		file, err := os.OpenFile(output, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			return fmt.Errorf("failed to open log file: %w", err)
-		}
-		writeSyncer = zapcore.AddSync(file)
+	// always put logs in standard output
+	consoleSyncer := zapcore.AddSync(os.Stdout)
+
+	// formating log file name
+	date := time.Now().Format("2006-01-02")
+
+	logDirName := "log"
+
+	if err := os.MkdirAll(logDirName, os.ModePerm); err != nil {
+		return fmt.Errorf("failed to create log directory: %w", err)
 	}
+
+	logFilePath := fmt.Sprintf("%s/%s.log", logDirName, date)
+	file, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to open log file: %w", err)
+	}
+	fileSyncer := zapcore.AddSync(file)
+
+	// combines both file and console log syncer
+	writeSyncer := zapcore.NewMultiWriteSyncer(consoleSyncer, fileSyncer)
 
 	// Create the zap core using encoder, output, and log level
 	core := zapcore.NewCore(encoder, writeSyncer, zapLevel)

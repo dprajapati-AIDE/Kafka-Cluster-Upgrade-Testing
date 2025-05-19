@@ -64,3 +64,13 @@ func (c *Client) GetBrokers() []string {
 func (c *Client) GetConfig() *config.ClusterConfig {
 	return c.config
 }
+
+// List Topics
+func (c *Client) ListTopics() (map[string]sarama.TopicDetail, error) {
+	return c.adminClient.ListTopics()
+}
+
+// Create Topic
+func (c *Client) CreateTopic(name string, detail *sarama.TopicDetail) error {
+	return c.adminClient.CreateTopic(name, detail, false)
+}
