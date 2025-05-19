@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go_producer_consumer/internal/config"
 	"go_producer_consumer/internal/logger"
+	"go_producer_consumer/internal/utils"
 	"strings"
 
 	"github.com/Shopify/sarama"
@@ -25,6 +26,7 @@ func NewClient(clusterConfig *config.ClusterConfig) (*Client, error) {
 	// Configure version
 	version, err := sarama.ParseKafkaVersion(clusterConfig.Version)
 	if err != nil {
+		logger.Error("failed to parse Kafka version", zap.Error(err), zap.String("func", utils.GetFunctionName(1)))
 		return nil, fmt.Errorf("failed to parse Kafka version: %w", err)
 	}
 	saramaConfig.Version = version
@@ -32,6 +34,7 @@ func NewClient(clusterConfig *config.ClusterConfig) (*Client, error) {
 	// Create admin client
 	adminClient, err := sarama.NewClusterAdmin(clusterConfig.Brokers, saramaConfig)
 	if err != nil {
+		logger.Error("failed to create Kafka admin client", zap.Error(err), zap.String("func", utils.GetFunctionName(1)))
 		return nil, fmt.Errorf("failed to create Kafka admin client: %w", err)
 	}
 
@@ -49,6 +52,7 @@ func NewClient(clusterConfig *config.ClusterConfig) (*Client, error) {
 // Close closes the Kafka client
 func (c *Client) Close() error {
 	if err := c.adminClient.Close(); err != nil {
+		logger.Error("failed to close Kafka admin client", zap.Error(err), zap.String("func", utils.GetFunctionName(1)))
 		return fmt.Errorf("failed to close Kafka admin client: %w", err)
 	}
 	logger.Info("Kafka client closed", zap.String("cluster", c.config.Name))

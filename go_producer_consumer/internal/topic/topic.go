@@ -3,6 +3,7 @@ package topic
 import (
 	"go_producer_consumer/internal/kafka"
 	"go_producer_consumer/internal/logger"
+	"go_producer_consumer/internal/utils"
 
 	"github.com/Shopify/sarama"
 	"go.uber.org/zap"
@@ -18,7 +19,7 @@ func EnsureTopics(client *kafka.Client) error {
 
 	existingTopics, err := client.ListTopics()
 	if err != nil {
-		logger.Error("Failed to list kafka topics", zap.Error(err))
+		logger.Error("Failed to list kafka topics", zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
 		return err
 	}
 
@@ -42,6 +43,7 @@ func EnsureTopics(client *kafka.Client) error {
 		err := client.CreateTopic(topicName, topicDetail)
 		if err != nil {
 			logger.Error("Failed to create topic",
+				zap.String("func", utils.GetFunctionName(1)),
 				zap.String("cluster", clusterConfig.Name),
 				zap.String("topic", topicName),
 				zap.Error(err))

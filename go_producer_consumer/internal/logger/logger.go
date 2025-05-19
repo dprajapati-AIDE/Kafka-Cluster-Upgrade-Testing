@@ -28,10 +28,15 @@ func Initialize(level, encoding, output string) error {
 		return fmt.Errorf("invalid log level: %s", level)
 	}
 
-	// Configure how log messages are encoded (e.g., time format, keys)
-	encoderConfig := zap.NewDevelopmentEncoderConfig()
-	encoderConfig.TimeKey = "timestamp"
-	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	// encoder config
+	encoderConfig := zapcore.EncoderConfig{
+		TimeKey:        "timestamp",
+		LevelKey:       "level",
+		MessageKey:     "message",
+		EncodeLevel:    zapcore.CapitalLevelEncoder,
+		EncodeTime:     zapcore.ISO8601TimeEncoder,
+		EncodeDuration: zapcore.StringDurationEncoder,
+	}
 
 	// Choose encoder: JSON or console format
 	var encoder zapcore.Encoder
