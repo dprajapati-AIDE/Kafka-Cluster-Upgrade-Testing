@@ -12,6 +12,11 @@ kafka:
         - "localhost:9091"
         - "localhost:9092"
         - "localhost:9093"
+      topics:
+        - device: "firewall"
+          name: "juniper.firewall.SRX"
+        - device: "router"
+          name: "juniper.router.SSR"
 
     - name: "kafka-3.7.2"
       version: "3.7.2"
@@ -19,3 +24,16 @@ kafka:
         - "localhost:19092"
         - "localhost:19094"
         - "localhost:19096"
+      topics:
+        - device: "firewall"
+          name: "juniper.firewall.SRX"
+        - device: "router"
+          name: "juniper.router.SSR"
+
+devices:
+  vendor: "Juniper"
+  types:
+    firewall:
+      - SRX
+    router:
+      - SSR

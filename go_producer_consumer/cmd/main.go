@@ -5,6 +5,8 @@ import (
 	"go_producer_consumer/internal/config"
 	"go_producer_consumer/internal/kafka"
 	"go_producer_consumer/internal/logger"
+	"go_producer_consumer/internal/topic"
+	"go_producer_consumer/internal/utils"
 	"os"
 	"os/signal"
 	"syscall"
@@ -43,6 +45,7 @@ func main() {
 		client, err := kafka.NewClient(&cluster)
 		if err != nil {
 			logger.Error("Failed to connect to Kafka cluster",
+				zap.String("func", utils.GetFunctionName(1)),
 				zap.String("cluster", cluster.Name),
 				zap.Error(err))
 			continue
@@ -51,6 +54,12 @@ func main() {
 		logger.Info("Successfully connected to Kafka cluster",
 			zap.String("cluster", cluster.Name),
 			zap.Strings("brokers", client.GetBrokers()))
+
+		// Ensure required topics are present
+		err = topic.EnsureTopics(client)
+		if err != nil {
+			logger.Warn("Failed to ensure topics", zap.String("func", utils.GetFunctionName(1)), zap.String("cluster", cluster.Name), zap.Error(err))
+		}
 
 		clients = append(clients, client)
 	}
@@ -62,7 +71,8 @@ func main() {
 	// Gracefully close all Kafka clients
 	for _, client := range clients {
 		if err := client.Close(); err != nil {
-			logger.Warn("Error closing Kafka client",
+			logger.Error("Error closing Kafka client",
+				zap.String("func", utils.GetFunctionName(1)),
 				zap.String("cluster", client.GetConfig().Name),
 				zap.Error(err))
 		}
