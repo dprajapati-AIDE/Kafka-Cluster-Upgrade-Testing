@@ -38,40 +38,53 @@ func NewProducer(cluster *config.ClusterConfig) (*Producer, error) {
 	}, nil
 }
 
-func (p *Producer) ProduceMessage(topic string, count int) error {
+func (p *Producer) ProduceMessage(devices config.DevicesConfig, count int) error {
 
-	for i := 0; i < count; i++ {
-
-		msg := DeviceMessageModel{
-			Timestamp:  time.Now().Format(time.RFC3339),
-			DeviceID:   faker.UUIDDigit(),
-			DeviceIP:   faker.IPv4(),
-			DeviceType: "firewall",
-			Vendor:     "Juniper",
-			Message:    faker.Sentence(),
-		}
-
-		jsonBytes, err := json.Marshal(msg)
-		if err != nil {
-			logger.Error("Failed to marshal message", zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
+	for _, topic := range p.cluster.Topics {
+		deviceType := topic.Device
+		deviceModels, ok := devices.Types[deviceType]
+		if !ok || len(deviceModels) == 0 {
+			logger.Warn("Device type not found in config or has no models",
+				zap.String("func", utils.GetFunctionName(1)),
+				zap.String("deviceType", deviceType),
+				zap.String("topic", topic.Name))
 			continue
 		}
 
-		kafkaMessage := &sarama.ProducerMessage{
-			Topic: topic,
-			Value: sarama.ByteEncoder(jsonBytes),
-		}
+		for i := 0; i < count; i++ {
 
-		partition, offset, err := p.producer.SendMessage(kafkaMessage)
-		if err != nil {
-			logger.Error("Failed to send message", zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
-			continue
-		}
+			msg := DeviceMessageModel{
+				Timestamp:   time.Now().Format(time.RFC3339),
+				DeviceID:    faker.UUIDDigit(),
+				DeviceIP:    faker.IPv4(),
+				DeviceType:  deviceType,
+				DeviceModel: deviceModels[0],
+				Vendor:      "Juniper",
+				Message:     faker.Sentence(),
+			}
 
-		logger.Info("Message sent",
-			zap.String("topic", topic),
-			zap.Int32("partition", partition),
-			zap.Int64("offset", offset))
+			jsonBytes, err := json.Marshal(msg)
+			if err != nil {
+				logger.Error("Failed to marshal message", zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
+				continue
+			}
+
+			kafkaMessage := &sarama.ProducerMessage{
+				Topic: topic.Name,
+				Value: sarama.ByteEncoder(jsonBytes),
+			}
+
+			partition, offset, err := p.producer.SendMessage(kafkaMessage)
+			if err != nil {
+				logger.Error("Failed to send message", zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
+				continue
+			}
+
+			logger.Info("Message sent",
+				zap.String("topic", topic.Name),
+				zap.Int32("partition", partition),
+				zap.Int64("offset", offset))
+		}
 	}
 
 	return nil

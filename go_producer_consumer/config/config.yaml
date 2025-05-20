@@ -17,6 +17,8 @@ kafka:
           name: "juniper.firewall.SRX"
         - device: "router"
           name: "juniper.router.SSR"
+        - device: "switch"
+          name: "juniper.switch.EX"
 
     - name: "kafka-3.7.2"
       version: "3.7.2"
@@ -29,6 +31,8 @@ kafka:
           name: "juniper.firewall.SRX"
         - device: "router"
           name: "juniper.router.SSR"
+        - device: "switch"
+          name: "juniper.switch.EX"
 
 devices:
   vendor: "Juniper"
@@ -37,3 +41,5 @@ devices:
       - SRX
     router:
       - SSR
+    switch:
+      - EX

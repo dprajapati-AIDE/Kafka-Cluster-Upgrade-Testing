@@ -78,11 +78,11 @@ func main() {
 				continue
 			}
 
-			for _, topic := range cluster.Topics {
-				if err := producer.ProduceMessage(topic.Name, 10); err != nil {
-					logger.Error("Error sending message", zap.String("func", utils.GetFunctionName(1)), zap.String("topic", topic.Name), zap.Error(err))
-				}
+			err = producer.ProduceMessage(cfg.Devices, 10)
+			if err != nil {
+				logger.Error("Failed to send messages", zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
 			}
+			producer.Close()
 		}
 	}
 
