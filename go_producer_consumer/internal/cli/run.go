@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"context"
@@ -17,10 +17,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func main() {
-
-	role := os.Getenv("APP_ROLE") // producer, consumer, both
-
+func Run(role string, msgCount int, consumerGroupName string) error {
 	// Load config
 	cfg, err := config.LoadConfig("")
 	if err != nil {
@@ -78,7 +75,7 @@ func main() {
 				continue
 			}
 
-			err = producer.ProduceMessage(cfg.Devices, 10)
+			err = producer.ProduceMessage(cfg.Devices, msgCount)
 			if err != nil {
 				logger.Error("Failed to send messages", zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
 			}
@@ -94,7 +91,7 @@ func main() {
 				topics = append(topics, topic.Name)
 			}
 			go func(c config.ClusterConfig) {
-				err := consumer.StartConsumerGroup(&c, "juniper-group", topics)
+				err := consumer.StartConsumerGroup(&c, consumerGroupName, topics)
 				if err != nil {
 					logger.Error("Consumer group failed", zap.String("cluster", c.Name), zap.Error(err))
 				}
@@ -118,4 +115,7 @@ func main() {
 
 	logger.Info("Shutdown complete")
 	time.Sleep(500 * time.Millisecond)
+
+	return nil
+
 }
