@@ -28,7 +28,7 @@ func NewProducer(cluster *config.ClusterConfig) (*Producer, error) {
 	saramaConfig.Net.WriteTimeout = 30 * time.Second
 	saramaConfig.Metadata.RefreshFrequency = 2 * time.Minute
 	saramaConfig.Metadata.Retry.Backoff = 2 * time.Second
-	saramaConfig.Producer.MaxMessageBytes = 1_000_000
+	saramaConfig.Producer.MaxMessageBytes = 20_000_000
 	saramaConfig.Producer.RequiredAcks = sarama.RequiredAcks(1)
 	saramaConfig.Producer.Timeout = 10 * time.Second
 	saramaConfig.Producer.Return.Successes = true
