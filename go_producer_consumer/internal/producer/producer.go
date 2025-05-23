@@ -98,6 +98,7 @@ func (p *Producer) ProduceMessage(devices config.DevicesConfig, count int) error
 			}
 
 			logger.Info("Message sent",
+				zap.String("cluster", p.cluster.Name),
 				zap.String("topic", topic.Name),
 				zap.Int32("partition", partition),
 				zap.Int64("offset", offset))

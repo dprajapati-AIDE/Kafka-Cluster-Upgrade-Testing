@@ -27,11 +27,11 @@ func StartConsumerGroup(cluster *config.ClusterConfig, groupID string, topics []
 	defer consumerGroup.Close()
 
 	ctx := context.Background()
-	handler := &Consumer{}
+	handler := &Consumer{cluster: cluster}
 
 	for {
 		if err := consumerGroup.Consume(ctx, topics, handler); err != nil {
-			logger.Error("Error consuming from kafka", zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
+			logger.Error("Error consuming from kafka", zap.String("cluster", handler.cluster.Name), zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
 			break
 		}
 	}
