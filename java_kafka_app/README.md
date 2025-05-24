@@ -2,6 +2,8 @@
 
 A modular, CLI-driven Kafka producer-consumer application written in Java Maven. It uses CLI commands and supports YAML-based configuration, structured logging, and clean package organization.
 
+The code has been tested on the following Java versions: Java 8, Java 11, and Java 21.
+
 ## Setting up Multiple Java Version
 
 ### Installation and Configuration of jenv
