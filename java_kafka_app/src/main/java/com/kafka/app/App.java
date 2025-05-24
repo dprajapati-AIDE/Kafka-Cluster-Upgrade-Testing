@@ -6,6 +6,7 @@ import com.kafka.app.logger.AppLogger;
 import com.kafka.app.model.AppConfig;
 import com.kafka.app.model.KafkaCluster;
 import com.kafka.app.producer.Producer;
+import com.kafka.app.consumer.ConsumerGroup;
 import com.kafka.app.kafka.KafkaManager;
 import com.kafka.app.topic.TopicManager;
 
@@ -72,8 +73,17 @@ public class App {
             TopicManager topicManager = new TopicManager();
             topicManager.processClusters(reachableClusters);
 
+            // Producer
             Producer producerService = new Producer(config.getDeviceConfig());
             producerService.produceToClusters(reachableClusters, 10);
+
+            // Consumer
+            for (KafkaCluster cluster : reachableClusters) {
+                List<String> topics = cluster.getTopics().stream()
+                        .map(t -> t.getName())
+                        .collect(java.util.stream.Collectors.toList());
+                ConsumerGroup.start(cluster, "demo-consumer-group", topics);
+            }
 
         } catch (Exception e) {
             logger.error("Failed to load configuration or initialize components: {}", e.getMessage(), e);
