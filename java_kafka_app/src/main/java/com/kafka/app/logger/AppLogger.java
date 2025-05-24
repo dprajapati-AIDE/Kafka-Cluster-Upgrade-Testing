@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class AppLogger {
 
     private static boolean initialized = false;
-    private static final String LOG_DIR = "./logs";
+    private static final String LOG_DIR = "./log";
 
     public static synchronized void initializeLogger(LoggingConfig config) {
         if (initialized)
