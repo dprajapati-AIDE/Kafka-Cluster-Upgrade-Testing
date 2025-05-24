@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.kafka.app.logger.AppLogger;
 import com.kafka.app.model.AppConfig;
 import com.kafka.app.model.KafkaCluster;
+import com.kafka.app.producer.Producer;
 import com.kafka.app.kafka.KafkaManager;
 import com.kafka.app.topic.TopicManager;
 
@@ -70,6 +71,9 @@ public class App {
             // Process topics on all reachable clusters
             TopicManager topicManager = new TopicManager();
             topicManager.processClusters(reachableClusters);
+
+            Producer producerService = new Producer(config.getDeviceConfig());
+            producerService.produceToClusters(reachableClusters, 10);
 
         } catch (Exception e) {
             logger.error("Failed to load configuration or initialize components: {}", e.getMessage(), e);

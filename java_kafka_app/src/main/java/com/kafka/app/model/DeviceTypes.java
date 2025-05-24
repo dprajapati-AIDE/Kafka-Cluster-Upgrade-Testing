@@ -34,4 +34,19 @@ public class DeviceTypes {
     public void setSwitch(List<String> switchNW) {
         this.switchNW = switchNW;
     }
+
+    public List<String> getByDeviceType(String deviceType) {
+        if (deviceType == null)
+            return null;
+        switch (deviceType.toLowerCase()) {
+            case "firewall":
+                return firewall;
+            case "router":
+                return router;
+            case "switch":
+                return switchNW;
+            default:
+                return null;
+        }
+    }
 }
