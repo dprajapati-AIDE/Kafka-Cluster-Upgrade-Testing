@@ -175,3 +175,8 @@ cython_debug/
 
 # kafka
 */kafka/*
+
+*log*
+.java-version
+*target*
+dependency-reduced-pom.xml
