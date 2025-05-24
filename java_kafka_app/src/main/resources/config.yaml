@@ -14,11 +14,11 @@ kafka:
         - "localhost:9093"
       topics:
         - device: "firewall"
-          name: "juniper.firewall.SRX"
+          name: "java.juniper.firewall.SRX"
         - device: "router"
-          name: "juniper.router.SSR"
+          name: "java.juniper.router.SSR"
         - device: "switch"
-          name: "juniper.switch.EX"
+          name: "java.juniper.switch.EX"
 
     - name: "kafka-3.7.2"
       version: "3.7.2"
@@ -28,11 +28,11 @@ kafka:
         - "localhost:19096"
       topics:
         - device: "firewall"
-          name: "juniper.firewall.SRX"
+          name: "java.juniper.firewall.SRX"
         - device: "router"
-          name: "juniper.router.SSR"
+          name: "java.juniper.router.SSR"
         - device: "switch"
-          name: "juniper.switch.EX"
+          name: "java.juniper.switch.EX"
 
 devices:
   vendor: "Juniper"
