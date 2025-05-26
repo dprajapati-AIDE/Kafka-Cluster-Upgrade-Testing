@@ -4,7 +4,6 @@ import java.util.List;
 
 public class KafkaCluster {
     public String name;
-    public String version;
     public List<String> brokers;
     public List<Topic> topics;
 
@@ -13,10 +12,6 @@ public class KafkaCluster {
 
     public String getName() {
         return name;
-    }
-
-    public String getVersion() {
-        return version;
     }
 
     public List<String> getBrokers() {
@@ -29,10 +24,6 @@ public class KafkaCluster {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 
     public void setBrokers(List<String> brokers) {
