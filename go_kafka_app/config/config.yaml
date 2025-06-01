@@ -1,0 +1,123 @@
+logging:
+  level: "info"
+  encoding: "json"
+  output: "stdout"
+
+
+kafka:
+  clusters:
+    - name: "kafka-2.1.1"
+      version: "2.1.1"
+      brokers:
+        - "localhost:9091"
+        - "localhost:9092"
+        - "localhost:9093"
+
+    - name: "kafka-3.7.2"
+      version: "2.1.1"
+      brokers:
+        - "localhost:19092"
+        - "localhost:19094"
+        - "localhost:19096"
+
+  topics:
+    - go-app-topic-1
+    - go-app-topic-2
+    - go-app-topic-3
+    - go-app-topic-4
+    - go-app-topic-5
+    - go-app-topic-6
+    - go-app-topic-7
+    - go-app-topic-8
+    - go-app-topic-9
+    - go-app-topic-10
+    - go-app-topic-11
+    - go-app-topic-12
+    - go-app-topic-13
+    - go-app-topic-14
+    - go-app-topic-15
+    - go-app-topic-16
+    - go-app-topic-17
+    - go-app-topic-18
+    - go-app-topic-19
+    - go-app-topic-20
+    - go-app-topic-21
+    - go-app-topic-22
+    - go-app-topic-23
+    - go-app-topic-24
+    - go-app-topic-25
+    - go-app-topic-26
+    - go-app-topic-27
+    - go-app-topic-28
+    - go-app-topic-29
+    - go-app-topic-30
+    - go-app-topic-31
+    - go-app-topic-32
+    - go-app-topic-33
+    - go-app-topic-34
+    - go-app-topic-35
+    - go-app-topic-36
+    - go-app-topic-37
+    - go-app-topic-38
+    - go-app-topic-39
+    - go-app-topic-40
+    - go-app-topic-41
+    - go-app-topic-42
+    - go-app-topic-43
+    - go-app-topic-44
+    - go-app-topic-45
+    - go-app-topic-46
+    - go-app-topic-47
+    - go-app-topic-48
+    - go-app-topic-49
+    - go-app-topic-50
+    - go-app-topic-51
+    - go-app-topic-52
+    - go-app-topic-53
+    - go-app-topic-54
+    - go-app-topic-55
+    - go-app-topic-56
+    - go-app-topic-57
+    - go-app-topic-58
+    - go-app-topic-59
+    - go-app-topic-60
+    - go-app-topic-61
+    - go-app-topic-62
+    - go-app-topic-63
+    - go-app-topic-64
+    - go-app-topic-65
+    - go-app-topic-66
+    - go-app-topic-67
+    - go-app-topic-68
+    - go-app-topic-69
+    - go-app-topic-70
+    - go-app-topic-71
+    - go-app-topic-72
+    - go-app-topic-73
+    - go-app-topic-74
+    - go-app-topic-75
+    - go-app-topic-76
+    - go-app-topic-77
+    - go-app-topic-78
+    - go-app-topic-79
+    - go-app-topic-80
+    - go-app-topic-81
+    - go-app-topic-82
+    - go-app-topic-83
+    - go-app-topic-84
+    - go-app-topic-85
+    - go-app-topic-86
+    - go-app-topic-87
+    - go-app-topic-88
+    - go-app-topic-89
+    - go-app-topic-90
+    - go-app-topic-91
+    - go-app-topic-92
+    - go-app-topic-93
+    - go-app-topic-94
+    - go-app-topic-95
+    - go-app-topic-96
+    - go-app-topic-97
+    - go-app-topic-98
+    - go-app-topic-99
+    - go-app-topic-100

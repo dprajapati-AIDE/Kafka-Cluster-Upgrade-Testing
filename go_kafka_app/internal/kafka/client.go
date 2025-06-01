@@ -2,9 +2,9 @@ package kafka
 
 import (
 	"fmt"
-	"go_producer_consumer/internal/config"
-	"go_producer_consumer/internal/logger"
-	"go_producer_consumer/internal/utils"
+	"go_kafka_app/internal/config"
+	"go_kafka_app/internal/logger"
+	"go_kafka_app/internal/utils"
 	"strings"
 
 	"github.com/Shopify/sarama"

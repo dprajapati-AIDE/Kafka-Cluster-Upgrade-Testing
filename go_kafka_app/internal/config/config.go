@@ -11,7 +11,6 @@ import (
 type Config struct {
 	Logging LoggingConfig `yaml:"logging"`
 	Kafka   KafkaConfig   `yaml:"kafka"`
-	Devices DevicesConfig `yaml:"devices"`
 }
 
 type LoggingConfig struct {
@@ -22,23 +21,13 @@ type LoggingConfig struct {
 
 type KafkaConfig struct {
 	Clusters []ClusterConfig `yaml:"clusters"`
+	Topics   []string        `yaml:"topics"`
 }
 
 type ClusterConfig struct {
-	Name    string        `yaml:"name"`
-	Version string        `yaml:"version"`
-	Brokers []string      `yaml:"brokers"`
-	Topics  []TopicConfig `yaml:"topics"`
-}
-
-type TopicConfig struct {
-	Device string `yaml:"device"`
-	Name   string `yaml:"name"`
-}
-
-type DevicesConfig struct {
-	Vendor string              `yaml:"vendor"`
-	Types  map[string][]string `yaml:"types"`
+	Name    string   `yaml:"name"`
+	Version string   `yaml:"version"`
+	Brokers []string `yaml:"brokers"`
 }
 
 func LoadConfig(configPath string) (*Config, error) {
@@ -81,19 +70,6 @@ func validateConfig(config *Config) error {
 		if len(cluster.Brokers) == 0 {
 			return fmt.Errorf("no brokers defined for cluster %s", cluster.Name)
 		}
-		for _, topic := range cluster.Topics {
-			if topic.Device == "" || topic.Name == "" {
-				return fmt.Errorf("invalid topic configuration in cluster %s", cluster.Name)
-			}
-		}
-	}
-
-	// Validate devices
-	if config.Devices.Vendor == "" {
-		return fmt.Errorf("vendor name is required in devices config")
-	}
-	if len(config.Devices.Types) == 0 {
-		return fmt.Errorf("no devices configured under vendor %s", config.Devices.Vendor)
 	}
 
 	return nil

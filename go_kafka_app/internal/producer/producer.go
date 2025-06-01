@@ -1,15 +1,13 @@
 package producer
 
 import (
-	"encoding/json"
 	"fmt"
-	"go_producer_consumer/internal/config"
-	"go_producer_consumer/internal/logger"
-	"go_producer_consumer/internal/utils"
+	"go_kafka_app/internal/config"
+	"go_kafka_app/internal/logger"
+	"go_kafka_app/internal/utils"
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/go-faker/faker/v4"
 	"go.uber.org/zap"
 )
 
@@ -55,39 +53,22 @@ func NewProducer(cluster *config.ClusterConfig) (*Producer, error) {
 	}, nil
 }
 
-func (p *Producer) ProduceMessage(devices config.DevicesConfig, count int) error {
+func (p *Producer) ProduceMessage(topics []string, count int, messageSizeKB int) error {
 
-	for _, topic := range p.cluster.Topics {
-		deviceType := topic.Device
-		deviceModels, ok := devices.Types[deviceType]
-		if !ok || len(deviceModels) == 0 {
-			logger.Warn("Device type not found in config or has no models",
-				zap.String("func", utils.GetFunctionName(1)),
-				zap.String("deviceType", deviceType),
-				zap.String("topic", topic.Name))
-			continue
-		}
+	for _, topicName := range topics {
 
 		for i := 0; i < count; i++ {
 
-			msg := DeviceMessageModel{
-				Timestamp:   time.Now().Format(time.RFC3339),
-				DeviceID:    faker.UUIDDigit(),
-				DeviceIP:    faker.IPv4(),
-				DeviceType:  deviceType,
-				DeviceModel: deviceModels[0],
-				Vendor:      "Juniper",
-				Message:     faker.Sentence(),
-			}
-
-			jsonBytes, err := json.Marshal(msg)
+			jsonBytes, err := utils.GenerateMessage(messageSizeKB)
 			if err != nil {
-				logger.Error("Failed to marshal message", zap.String("func", utils.GetFunctionName(1)), zap.Error(err))
+				logger.Error("Failed to generate message",
+					zap.String("func", utils.GetFunctionName(1)),
+					zap.Error(err))
 				continue
 			}
 
 			kafkaMessage := &sarama.ProducerMessage{
-				Topic: topic.Name,
+				Topic: topicName,
 				Value: sarama.ByteEncoder(jsonBytes),
 			}
 
@@ -99,9 +80,10 @@ func (p *Producer) ProduceMessage(devices config.DevicesConfig, count int) error
 
 			logger.Info("Message sent",
 				zap.String("cluster", p.cluster.Name),
-				zap.String("topic", topic.Name),
+				zap.String("topic", topicName),
 				zap.Int32("partition", partition),
-				zap.Int64("offset", offset))
+				zap.Int64("offset", offset),
+				zap.Int("message length in bytes", len(jsonBytes)))
 		}
 	}
 

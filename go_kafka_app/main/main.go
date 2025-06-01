@@ -1,6 +1,6 @@
 package main
 
-import "go_producer_consumer/cmd"
+import "go_kafka_app/cmd"
 
 func main() {
 	cmd.Execute()

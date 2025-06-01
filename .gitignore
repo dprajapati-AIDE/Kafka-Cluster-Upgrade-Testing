@@ -180,3 +180,4 @@ cython_debug/
 .java-version
 *target*
 dependency-reduced-pom.xml
+.DS_Store

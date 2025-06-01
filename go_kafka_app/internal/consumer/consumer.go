@@ -2,9 +2,9 @@ package consumer
 
 import (
 	"encoding/json"
-	"go_producer_consumer/internal/config"
-	"go_producer_consumer/internal/logger"
-	"go_producer_consumer/internal/utils"
+	"go_kafka_app/internal/config"
+	"go_kafka_app/internal/logger"
+	"go_kafka_app/internal/utils"
 
 	"github.com/Shopify/sarama"
 	"go.uber.org/zap"
@@ -38,8 +38,7 @@ func (c *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim saram
 				zap.String("cluster", c.cluster.Name),
 				zap.String("topic", msg.Topic),
 				zap.Int32("partition", msg.Partition),
-				zap.Int64("offset", msg.Offset),
-				zap.Any("message", payload))
+				zap.Int64("offset", msg.Offset))
 
 		}
 

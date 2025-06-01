@@ -2,6 +2,10 @@
 
 A modular, CLI-driven Kafka producer-consumer application written in Go. It uses the Cobra library for CLI commands and supports YAML-based configuration, structured logging, and clean package organization.
 
+It also supports implementation of Internal Library - Bus3
+- [mist_go_utils](github.com/mistsys/mist_go_utils)
+- [sarama-consumer](github.com/mistsys/sarama-consumer)
+
 
 ## 🛠 Installation
 
@@ -50,20 +54,32 @@ This will download and install the necessary dependencies listed in `go.mo` and 
 
 ### Producer Mode
 ```
-go run main/main.go --role=producer --msg-count=5
+go run main/main.go --role=producer --msg-count=5 --msg-size-kb=100
 ```
-
-`--msg-count` is optional; defaults to the configured value if not provided.
+or to use internal library implementation
+```
+go run main/main.go --role=producer --msg-count=5 --bus3=true --msg-size-kb=100
+```
+`--msg-count` and `--msg-size-kb` are optional; defaults to the configured value if not provided.
 
 ### Consumer Mode
 ```
 go run main/main.go --role=consumer --consumer-group=demo
+```
+or to use internal library implementation
+```
+go run main/main.go --role=consumer --consumer-group=demo --bus3=true
 ```
 
 ## Producer Consumer Together Mode
 ```
 go run main/main.go --role=both
 ```
+or to use internal library implementation
+```
+go run main/main.go --role=both --msg-count=10 --consumer-group=demo --bus3=true --msg-size-kb=100
+```
+
 
 ## Configuration
 Edit the `config/config.yaml` file to define Kafka settings, topic names and devices related configurations.
@@ -75,3 +91,5 @@ Edit the `config/config.yaml` file to define Kafka settings, topic names and dev
 | [`cobra`](https://github.com/spf13/cobra)     | CLI command parsing                      |
 | [`zap`](https://github.com/uber-go/zap)       | High-performance structured logging      |
 | [`faker`](https://github.com/go-faker/faker)  | Generate fake data for producer messages |
+|[`mist_go_utils`](github.com/mistsys/mist_go_utils)|Mistsys wrapper of sarama|
+|[`sarama-consumer`](github.com/mistsys/sarama-consumer)|Mistsys wrapper of sarama consumer|
