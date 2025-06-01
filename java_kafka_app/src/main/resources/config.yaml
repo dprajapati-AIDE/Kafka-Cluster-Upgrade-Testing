@@ -3,7 +3,6 @@ logging:
   encoding: "json"
   output: "stdout"
 
-
 kafka:
   clusters:
     - name: "kafka-2.1.1"
@@ -11,33 +10,111 @@ kafka:
         - "localhost:9091"
         - "localhost:9092"
         - "localhost:9093"
-      topics:
-        - device: "firewall"
-          name: "java.juniper.firewall.SRX"
-        - device: "router"
-          name: "java.juniper.router.SSR"
-        - device: "switch"
-          name: "java.juniper.switch.EX"
 
     - name: "kafka-3.7.2"
       brokers:
         - "localhost:19092"
         - "localhost:19094"
         - "localhost:19096"
-      topics:
-        - device: "firewall"
-          name: "java.juniper.firewall.SRX"
-        - device: "router"
-          name: "java.juniper.router.SSR"
-        - device: "switch"
-          name: "java.juniper.switch.EX"
 
-devices:
-  vendor: "Juniper"
-  types:
-    firewall:
-      - SRX
-    router:
-      - SSR
-    switch:
-      - EX
+  topics:
+    - java-app-topic-1
+    - java-app-topic-2
+    - java-app-topic-3
+    - java-app-topic-4
+    - java-app-topic-5
+    - java-app-topic-6
+    - java-app-topic-7
+    - java-app-topic-8
+    - java-app-topic-9
+    - java-app-topic-10
+    - java-app-topic-11
+    - java-app-topic-12
+    - java-app-topic-13
+    - java-app-topic-14
+    - java-app-topic-15
+    - java-app-topic-16
+    - java-app-topic-17
+    - java-app-topic-18
+    - java-app-topic-19
+    - java-app-topic-20
+    - java-app-topic-21
+    - java-app-topic-22
+    - java-app-topic-23
+    - java-app-topic-24
+    - java-app-topic-25
+    - java-app-topic-26
+    - java-app-topic-27
+    - java-app-topic-28
+    - java-app-topic-29
+    - java-app-topic-30
+    - java-app-topic-31
+    - java-app-topic-32
+    - java-app-topic-33
+    - java-app-topic-34
+    - java-app-topic-35
+    - java-app-topic-36
+    - java-app-topic-37
+    - java-app-topic-38
+    - java-app-topic-39
+    - java-app-topic-40
+    - java-app-topic-41
+    - java-app-topic-42
+    - java-app-topic-43
+    - java-app-topic-44
+    - java-app-topic-45
+    - java-app-topic-46
+    - java-app-topic-47
+    - java-app-topic-48
+    - java-app-topic-49
+    - java-app-topic-50
+    - java-app-topic-51
+    - java-app-topic-52
+    - java-app-topic-53
+    - java-app-topic-54
+    - java-app-topic-55
+    - java-app-topic-56
+    - java-app-topic-57
+    - java-app-topic-58
+    - java-app-topic-59
+    - java-app-topic-60
+    - java-app-topic-61
+    - java-app-topic-62
+    - java-app-topic-63
+    - java-app-topic-64
+    - java-app-topic-65
+    - java-app-topic-66
+    - java-app-topic-67
+    - java-app-topic-68
+    - java-app-topic-69
+    - java-app-topic-70
+    - java-app-topic-71
+    - java-app-topic-72
+    - java-app-topic-73
+    - java-app-topic-74
+    - java-app-topic-75
+    - java-app-topic-76
+    - java-app-topic-77
+    - java-app-topic-78
+    - java-app-topic-79
+    - java-app-topic-80
+    - java-app-topic-81
+    - java-app-topic-82
+    - java-app-topic-83
+    - java-app-topic-84
+    - java-app-topic-85
+    - java-app-topic-86
+    - java-app-topic-87
+    - java-app-topic-88
+    - java-app-topic-89
+    - java-app-topic-90
+    - java-app-topic-91
+    - java-app-topic-92
+    - java-app-topic-93
+    - java-app-topic-94
+    - java-app-topic-95
+    - java-app-topic-96
+    - java-app-topic-97
+    - java-app-topic-98
+    - java-app-topic-99
+    - java-app-topic-100

@@ -6,8 +6,6 @@ public class AppConfig {
 
     public LoggingConfig logging;
     public KafkaConfig kafka;
-    @JsonProperty("devices")
-    public DeviceConfig deviceConfig;
 
     public AppConfig() {
     }
@@ -20,19 +18,11 @@ public class AppConfig {
         return kafka;
     }
 
-    public DeviceConfig getDeviceConfig() {
-        return deviceConfig;
-    }
-
     public void setLogging(LoggingConfig logging) {
         this.logging = logging;
     }
 
     public void setKafka(KafkaConfig kafka) {
         this.kafka = kafka;
-    }
-
-    public void setDeviceConfig(DeviceConfig deviceConfig) {
-        this.deviceConfig = deviceConfig;
     }
 }

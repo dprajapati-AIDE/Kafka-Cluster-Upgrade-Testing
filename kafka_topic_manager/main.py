@@ -1,6 +1,7 @@
 import os
 import sys
 import argparse
+import logging
 
 from logger import get_logger
 from manager import KafkaTopicManager
@@ -10,26 +11,26 @@ logger = get_logger()
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        description='Kafka Topic Manager - Create and manage Kafka topics from CSV files')
+        description='Kafka Topic Manager - Create and manage Kafka topics from CSV files using kafka-python')
 
     # Required arguments
     parser.add_argument('--csv-file', required=True,
                         help='Path to the CSV file with topic configurations')
-    parser.add_argument('--kafka-bin', required=True,
-                        help='Path to Kafka bin directory with the CLI tools')
 
     # Kafka connection options
-    parser.add_argument('--zookeeper', default='localhost:2181',
-                        help='Zookeeper hostname (default: %(default)s)')
-    parser.add_argument('--bootstrap-server',
-                        help='Kafka bootstrap server address')
+    parser.add_argument('--bootstrap-server', required=True,
+                        help='Kafka bootstrap server address (e.g., localhost:9092)')
+    # Zookeeper argument is now deprecated for KafkaAdminClient, but we keep it for backward compatibility
+    # and log a warning if used.
+    parser.add_argument('--zookeeper', default=None,
+                        help='Deprecated: Zookeeper hostname. KafkaAdminClient uses --bootstrap-server.')
 
     # Topic configuration defaults
     parser.add_argument('--replication-factor', type=int, default=3,
                         help='Default replication factor for new topics if not specified in CSV')
 
     # Operation modes
-    parser.add_argument('--dry-run', type=bool, default=False,
+    parser.add_argument('--dry-run', action='store_true',
                         help='Print commands without executing them')
 
     parser.add_argument('--verbose', '-v', action='store_true',
@@ -45,14 +46,16 @@ def main():
         logger.setLevel(logging.DEBUG)
         logger.debug("Verbose logging enabled")
 
-    kafka_topics_sh = os.path.join(args.kafka_bin, 'kafka-topics.sh')
-    if not os.path.exists(kafka_topics_sh):
-        logger.error(f"Kafka tools not found at: {kafka_topics_sh}")
-        logger.info("Please provide the correct path to Kafka bin directory")
+    if not args.bootstrap_server:
+        logger.error(
+            "Missing --bootstrap-server argument. This is required for kafka-python.")
         sys.exit(1)
 
-    logger.info(f"Using ZooKeeper connection: {args.zookeeper}")
-    logger.info(f"Using Kafka bin directory: {args.kafka_bin}")
+    if args.zookeeper:
+        logger.warning("The --zookeeper argument is deprecated when using kafka-python for topic management. "
+                       "Please use --bootstrap-server instead.")
+
+    logger.info(f"Using Kafka bootstrap server: {args.bootstrap_server}")
     logger.info(f"Reading topics from: {args.csv_file}")
 
     manager = KafkaTopicManager(args)
@@ -60,5 +63,4 @@ def main():
 
 
 if __name__ == '__main__':
-    import logging
     main()

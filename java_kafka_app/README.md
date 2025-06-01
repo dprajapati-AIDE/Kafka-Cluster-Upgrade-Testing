@@ -155,10 +155,10 @@ mvn clean install
 
 ### Producer Mode
 ```
-java -jar target/java_producer_consumer-shaded.jar --role producer --msg-count 10
+java -jar target/java_producer_consumer-shaded.jar --role producer --msg-count 5 --msg-size-kb 10
 ```
 
-`--msg-count` is optional; defaults to the configured value if not provided.
+`--msg-count` and `--msg-size-kb` are optional; defaults to the configured value if not provided.
 
 ### Consumer Mode
 ```

@@ -8,17 +8,15 @@ import com.kafka.app.model.AppConfig;
 import com.kafka.app.model.KafkaCluster;
 import com.kafka.app.producer.Producer;
 import com.kafka.app.kafka.KafkaManager;
-import com.kafka.app.topic.TopicManager;
 import org.slf4j.Logger;
 
 import java.io.InputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Run {
     private static final Logger logger = AppLogger.getLogger(Run.class);
 
-    public static void run(String role, int msgCount, String consumerGroupName) {
+    public static void run(String role, int msgCount, String consumerGroupName, int messageSizeKB) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Shutdown signal received. Exiting...");
         }));
@@ -36,7 +34,8 @@ public class Run {
 
             config = mapper.readValue(inputStream, AppConfig.class);
             AppLogger.initializeLogger(config.getLogging());
-            logger.info("Configuration loaded");
+            logger.info("Configuration loaded. Running for Message Count: {} and Message Size: {}", msgCount,
+                    messageSizeKB);
 
             List<KafkaCluster> clusterList = config.getKafka().getClusters();
             List<KafkaCluster> reachableClusters = new ArrayList<>();
@@ -56,22 +55,17 @@ public class Run {
                 return;
             }
 
-            TopicManager topicManager = new TopicManager();
-            topicManager.processClusters(reachableClusters);
+            List<String> applicationTopics = config.getKafka().getTopics();
 
             if ("producer".equalsIgnoreCase(role) || "both".equalsIgnoreCase(role)) {
-                Producer producer = new Producer(config.getDeviceConfig());
+                Producer producer = new Producer(applicationTopics, messageSizeKB);
                 producer.produceToClusters(reachableClusters, msgCount);
             }
 
             if ("consumer".equalsIgnoreCase(role) || "both".equalsIgnoreCase(role)) {
                 for (KafkaCluster cluster : reachableClusters) {
-                    List<String> topics = cluster.getTopics().stream()
-                            .map(t -> t.getName())
-                            .collect(Collectors.toList());
-
                     Thread consumerThread = new Thread(() -> {
-                        ConsumerGroup.start(cluster, consumerGroupName, topics);
+                        ConsumerGroup.start(cluster, consumerGroupName, applicationTopics);
                     });
                     consumerThread.setDaemon(true);
                     consumerThread.start();
